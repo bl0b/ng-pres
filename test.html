@@ -3,24 +3,37 @@
         <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.2/angular.js"></script>
         <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.8/angular.js"></script>-->
-        <link rel type="stylesheet" src="ng-pres.css"/>
+        <link rel="stylesheet" type="text/css" href="ng-pres.css"/>
         <script type="text/javascript" src="ng-pres.js"></script>
         <style>
 .bgred { background-color: red; }
 .bold { font-weight: bold; border: 1px solid red; }
-ul.toc { list-style-type: upper-roman; }
-ul.toc ul.toc { list-style-type: lower-roman; }
-ul.toc ul.toc ul.toc { list-style-type: lower-alpha; }
-.toc-item { font-weight: normal; }
-.current-toc-item { font-weight: bold; }
+.header { height: 100px; }
+.left-sidebar { width: 120px; }
+/*.right-sidebar { width: 1px; border: 0; }*/
+.footer { height: 5px; border: 0; }
+td:empty { height: 0px; width: 0px; background: #000000; }
         </style>
     </head>
 
     <body>
-        <presentation>
+            <!--
+            -->
+        <presentation
+            slide-bullet="&EmptyVerySmallSquare;"
+            slide-bullet-active="&FilledVerySmallSquare;"
+            toc-hilight="pouet"
+            >
             <section title="toto">
                 <slide>
-                    <p>coin</p>
+                    <block title="coin">
+                        <p>Lorem blabla ipsum ipses ipset prout</p>
+                        <ul>
+                            <li>example item</li>
+                            <li>point to make</li>
+                            <li>another point</li>
+                        </ul>
+                    </block>
                 </slide>
                 <slide>
                     <p>plop</p>
@@ -41,8 +54,15 @@ ul.toc ul.toc ul.toc { list-style-type: lower-alpha; }
                     </section>
                 </section>
             </section>
-            <hr/>
-            <render-toc current-class="bold"/>
+            <header>
+                <h1>TITLE blablabla</h1>
+                <progress-bar/>
+            </header>
+            <left-sidebar>
+                <render-toc current-class="bold"/>
+            </left-sidebar>
+            <footer>
+                <div style="width: 150px; float: right;"><slide-counter/><progress-bar/></div>
         </presentation>
     </body>
 </html>
