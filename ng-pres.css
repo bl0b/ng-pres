@@ -3,10 +3,39 @@ html, body, div, span, a, p, table, td, tr, tbody, thead, th, h1, h2, h3, h4, h5
     padding: 0px;
     border-collapse: collapse;
     border-spacing: 0px;
+    background: none;
+}
+
+.huge { font-size: 24pt; }
+.big { font-size: 20pt; }
+.normal { font-size: 16pt; }
+.small { font-size: 12pt; }
+.tiny { font-size: 8pt; }
+
+body {
+    width: 800;
+    height: 600;
+    /*transform: scale(1vw/12*min(1, 1vh/9*4/3), 1vh/9*min(1, 1vw/12*3/4));*/
+    /*transform: scale(1vw/8*min(1, 1vh/6*4/3), 1vh/6*min(1, 1vw/8*3/4));*/
+    transform: scale(min(100vw, 133vh), min(75vw, 100vh));
+    transform: matrix(.5, 0, 0,
+                      0,   .5, 0,
+                      0,   0, 1);
+    background: white;
+    font-size: 16pt; /* normal */
+}
+
+presentation header h1 {
+    text-align: center;
+}
+
+presentation header h2 {
+    text-align: center;
 }
 
 html,body {
     height:100%;
+    overflow: hidden;
 }
 
 ul.toc {
@@ -86,22 +115,14 @@ ul.toc ul.toc ul.toc {
 .progress-bar {
     width: 100%;
     height: 10px;
-    background-color: blue;
+    background: blue;
+    background: linear-gradient(to bottom, rgba(255,255,255,0) 40%, blue 50%, rgba(255,255,255,0) 60%);
 }
 
 .progress-bar-inner {
     height: 100%;
     background-color: green;
-}
-
-.presentation {
-    display: -moz-box;
-    display: -webkit-flex;
-    display: flex;
-    /*height: 100%;*/
-    /*width: 100%;*/
-    -webkit-flex-flow: column wrap;
-    flex-flow: column wrap;
+    background: linear-gradient(to bottom, rgba(255,255,255,0) 25%, green 50%, rgba(255,255,255,0) 75%);
 }
 
 .top {
@@ -121,7 +142,7 @@ div.left ~ div.top {
 }
 
 .slide {
-    border: 1px solid red;
+    /*border: 1px solid red;*/
     width: auto;
     height: auto;
 }
@@ -133,17 +154,17 @@ table {
 td:empty { height: 0px; width: 0px; border: 0; }
 
 table.presentation {
-    min-height: 100%;
-    height: 100%;
-    min-width: 100%;
-    width: 100%;
-    border: 1px solid red;
+    min-height: 768px;
+    height: 768px;
+    min-width: 1024px;
+    width: 1024px;
+    /*border: 1px solid red;*/
     padding: 0;
     margin: 0;
     border-spacing: 0;
     border-collapse: collapse;
     empty-cells: hide;
-    overflow: hidden;
+    /*overflow: hidden;*/
 }
 
 table.presentation td:empty {
@@ -151,7 +172,7 @@ table.presentation td:empty {
 }
 
 table.presentation td {
-    border: 1px dashed black;
+    /*border: 1px dashed black;*/
     padding: 0;
     margin: 0;
     border-spacing: 0;
@@ -160,10 +181,13 @@ table.presentation td {
     vertical-align: top;
 }
 
+table.presentation td.footer {
+    vertical-align: bottom;
+}
+
 
 div.block {
     /*border-radius: 2em 1em 4em / 0.5em 3em;*/
-    border-radius: 2em / 4em;
     border: 1px solid lightgreen;
     overflow: hidden;
     margin: 2em;
@@ -185,3 +209,7 @@ div.block div.block-content {
     border-radius; 50px;
     padding: 1em;
 }
+
+.talk-author { display: inline-block; }
+.talk-date { display: inline-block; }
+.talk-where { display: inline-block; }
