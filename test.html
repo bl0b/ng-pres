@@ -1,5 +1,6 @@
 <html ng-app="ngPres">
     <head>
+        <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
         <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.2/angular.js"></script>
         <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.8/angular.js"></script>-->
@@ -8,38 +9,110 @@
         <style>
 .bgred { background-color: red; }
 .bold { font-weight: bold; border: 1px solid red; }
-.header { height: 100px; }
-.left-sidebar { width: 120px; }
+.header { height: 80px; }
+.left-sidebar { width: 130px; }
 /*.right-sidebar { width: 1px; border: 0; }*/
-.footer { height: 5px; border: 0; }
+/*.footer { height: 5px; border: 0; }*/
 td:empty { height: 0px; width: 0px; background: #000000; }
+div.block {
+    border-radius: 2em / 2em;
+}
+
+.slide-bullets {
+    display: inline-block;
+    padding-left: 5px;
+    /*position: relative;*/
+    /*top: -7px;*/
+}
+
+ul.updown { list-style: none; padding: 0; }
+ul.updown li {}
+ul.updown li.up { color: green; }
+ul.updown li.down { color: red; }
+ul.updown li.up:before { content: "+"; padding-right: 8px; color: green; }
+ul.updown li.down:before { content: "-"; padding-right: 8px; color: red; }
+
+/*
+.wrapper-with-intrinsic-ratio {
+	position: relative;
+	padding-bottom: 20%;
+	height: 0;
+}
+.element-to-stretch {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: teal;	
+}
+*/
         </style>
     </head>
 
     <body>
             <!--
+        <div class="wrapper-with-intrinsic-ratio">
+            <div class="element-to-stretch">
             -->
         <presentation
             slide-bullet="&EmptyVerySmallSquare;"
             slide-bullet-active="&FilledVerySmallSquare;"
             toc-hilight="pouet"
+            author="Damien Leroux"
+            where="on the Web"
+            date="31 dec 2015"
             >
-            <section title="toto">
+            <title>
+            </title>
+            <section title="Why ng-pres?">
                 <slide>
-                    <block title="coin">
-                        <p>Lorem blabla ipsum ipses ipset prout</p>
+                    <small><p style="text-align: center">Use the left and right arrow keys to navigate this presentation</p></small>
+                    <block title="Let's take a look at the existing options">
+                    <!--<adjustbox virtual-aspect="1.33333" virtual-width="800" width="300" height="200" style="width: 300px; height: 200px;">-->
+                    <adjustbox maintain-aspect style="width: 300px; height: 200px;">
                         <ul>
-                            <li>example item</li>
-                            <li>point to make</li>
-                            <li>another point</li>
+                            <li>Office suites
+                                <ul class="updown">
+                                    <li class="up">WYSIWIG</li>
+                                    <li class="up">can embed multimedia content more or less easily</li>
+                                    <li class="down">Bugs</li>
+                                    <li class="down">Lack of global consistency in styling (ever seen these sizes change from slide to slide?)</li>
+                                </ul>
+                            </li>
+                            <li>beamer
+                                <ul class="updown">
+                                    <li class="up">Good global consistency in styling</li>
+                                    <li class="up">Great with math formulae</li>
+                                    <li class="down">Bugs</li>
+                                    <li class="down">Tedious</li>
+                                </ul>
+                            </li>
+                            <li>Flash
+                                <ul class="updown">
+                                    <li class="down">Seriously?</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </adjustbox>
+                    </block>
+                    <block title="Why not HTML then?">
+                        <ul class="updown">
+                            <li class="up">HTML ensures proper styling and simple structuration of contents</li>
+                            <li class="up">Lots of JS libraries to embed dynamic contents, plots, even Te&chi;-style equations</li>
+                            <li class="down">But... it's static!</li>
+                            <li class="down">and varies slightly from browser to browser, although it's getting better.</li>
                         </ul>
                     </block>
                 </slide>
                 <slide>
-                    <p>plop</p>
+                    <block title="This is where AngularJS comes in">
+                        <p><em>ng-pres</em> defines a number of new HTML elements and attributes to help write presentations in the most comfortable way.</p>
+                        <p>It also implements the controls so you can go through the slides without the need for generating another file or using another application than a browser.</p>
+                    </block>
                 </slide>
             </section>
-            <section title="tutu">
+            <section title="Using ng-pres">
                 <slide>
                     <p>pouet</p>
                 </slide>
@@ -55,14 +128,21 @@ td:empty { height: 0px; width: 0px; background: #000000; }
                 </section>
             </section>
             <header>
-                <h1>TITLE blablabla</h1>
+                <h1>ng-pres: write your presentation slides with HTML</h1>
+                <h2>powered by AngularJS</h2>
                 <progress-bar/>
             </header>
             <left-sidebar>
                 <render-toc current-class="bold"/>
             </left-sidebar>
             <footer>
-                <div style="width: 150px; float: right;"><slide-counter/><progress-bar/></div>
+                <default-footer/>
+            </footer>
         </presentation>
+        <div onLoad="console.log(this);">
+        </div>
+        <!--
+    </div></div>
+            -->
     </body>
 </html>
