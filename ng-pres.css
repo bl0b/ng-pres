@@ -13,14 +13,14 @@ html, body, div, span, a, p, table, td, tr, tbody, thead, th, h1, h2, h3, h4, h5
 .tiny { font-size: 8pt; }
 
 body {
-    width: 800;
-    height: 600;
+    /*width: 800;*/
+    /*height: 600;*/
     /*transform: scale(1vw/12*min(1, 1vh/9*4/3), 1vh/9*min(1, 1vw/12*3/4));*/
     /*transform: scale(1vw/8*min(1, 1vh/6*4/3), 1vh/6*min(1, 1vw/8*3/4));*/
-    transform: scale(min(100vw, 133vh), min(75vw, 100vh));
-    transform: matrix(.5, 0, 0,
-                      0,   .5, 0,
-                      0,   0, 1);
+    /*transform: scale(min(100vw, 133vh), min(75vw, 100vh));*/
+    /*transform: matrix(.5, 0, 0,*/
+                      /*0,   .5, 0,*/
+                      /*0,   0, 1);*/
     background: white;
     font-size: 16pt; /* normal */
 }
@@ -143,8 +143,8 @@ div.left ~ div.top {
 
 .slide {
     /*border: 1px solid red;*/
-    width: auto;
-    height: auto;
+    /*width: auto;*/
+    /*height: auto;*/
 }
 
 table {

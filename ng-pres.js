@@ -31,7 +31,7 @@ var app = angular.module('ngPres', [])
             `);
     $templateCache
         .put("presentation.html",
-             `<adjustbox maintain-aspect style="width: 100vw; height: 100vh;">
+             `
              <table class="presentation">
                 <tbody>
                   <tr><td class="header" colspan="3" ng-transclude="header"></td></tr>
@@ -43,7 +43,7 @@ var app = angular.module('ngPres', [])
                   <tr><td class="footer" colspan="3" ng-transclude="footer">
                   </td></tr>
               </table>
-             </adjustbox>`);
+             `);
 })
 .directive('presentation', ['$document', '$rootScope', function($document, $rootScope) {
     return {
