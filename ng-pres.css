@@ -6,6 +6,8 @@ html, body, div, span, a, p, table, td, tr, tbody, thead, th, h1, h2, h3, h4, h5
     background: none;
 }
 
+.hidden { display: none; visibility: hidden; }
+
 .huge { font-size: 24pt; }
 .big { font-size: 20pt; }
 .normal { font-size: 16pt; }
@@ -25,12 +27,30 @@ body {
     font-size: 16pt; /* normal */
 }
 
-presentation header h1 {
+div.header h1 {
     text-align: center;
+	font-size: 1.5em;
 }
 
-presentation header h2 {
+div.header h2 {
     text-align: center;
+	font-size: 1.25em;
+}
+
+div.header {
+	position: relative;
+}
+
+div.footer {
+	position: relative;
+}
+
+div.left-sidebar {
+	position: relative;
+}
+
+div.right-sidebar {
+	position: relative;
 }
 
 html,body {
@@ -41,16 +61,19 @@ html,body {
 ul.toc {
     list-style-type: upper-roman;
     padding-left: 1.5em;
+	position: relative;
 }
 
 ul.toc ul.toc {
     list-style-type: lower-roman;
     padding-left: .5em;
+	position: relative;
 }
 
 ul.toc ul.toc ul.toc {
     list-style-type: lower-alpha;
     padding-left: .5em;
+	position: relative;
 }
 
 .toc-item {
@@ -61,8 +84,14 @@ ul.toc ul.toc ul.toc {
     font-weight: bold;
 }
 
-.slide {
+div.slide {
     height: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 }
 
 .vertical {
@@ -141,12 +170,6 @@ div.left ~ div.top {
     height: 80%;
 }
 
-.slide {
-    /*border: 1px solid red;*/
-    /*width: auto;*/
-    /*height: auto;*/
-}
-
 table {
     empty-cells: hide;
 }
@@ -179,10 +202,19 @@ table.presentation td {
     border-collapse: collapse;
     text-align: left;
     vertical-align: top;
+    /*overflow: hidden;*/
 }
 
 table.presentation td.footer {
     vertical-align: bottom;
+}
+
+
+table.presentation td.slide {
+    height: auto;
+    vertical-align: top;
+    /*overflow: hidden;*/
+    position: relative;
 }
 
 
@@ -200,6 +232,7 @@ div.block div.block-title {
     border-radius; 50px;
     background-color: lightgreen;
     padding: 1em;
+    padding-bottom: .5em;
 }
 
 div.block div.block-content {
@@ -208,6 +241,7 @@ div.block div.block-content {
     border-right: 1px solid lightgreen;
     border-radius; 50px;
     padding: 1em;
+    padding-top: .5em;
 }
 
 .talk-author { display: inline-block; }

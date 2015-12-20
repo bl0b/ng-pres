@@ -3,10 +3,64 @@
         <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
         <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.2/angular.js"></script>
-        <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.8/angular.js"></script>-->
         <link rel="stylesheet" type="text/css" href="ng-pres.css"/>
+        <link rel="stylesheet" href="hl/highlight.css">
+		<script src="//cdn.jsdelivr.net/highlight.js/9.0.0/highlight.min.js"></script>
+		<script type="text/javascript" src="3rd-party/angular-highlightjs.js"></script>
         <script type="text/javascript" src="ng-pres.js"></script>
+		<script type="text/javascript">
+var app = angular.module('ngPres');
+app.directive("helloSrc", [function() {
+	return {
+		templateUrl: 'hl/helloworld.html.html',
+		link: function(scope, element, attrs) {
+			var hl = attrs.lineHilite || "";
+			scope.lineHilite = hl.split(',').map(Number);
+		}
+	};
+}]);
+		</script>
+        <!--
+        <script type="text/javascript" src="3rd-party/prism.js"></script>
+        <link rel="stylesheet" type="text/css" href="3rd-party/prism.css"/>
+        <script type="text/javascript">
+var app = angular.module('prism', [])
+.directive('prismUrl', ['$http', function($http) {
+    return {
+        restrict: 'A',
+        transclude: true,
+        link: function ($scope, element, attrs) {
+            if (src_urls[attrs.prismUrl] === undefined) {
+                $http.get(attrs.prismUrl).then(
+                    function(response) {
+                        src_urls[attrs.prismUrl] = response.data;
+                        console.log('success', src_urls[attrs.prismUrl]);
+                        console.log("element", element[0]);
+                        element[0].text = src_urls[attrs.prismUrl];
+                        Prism.highlightElement(element[0]);
+                    },
+                    function(response) { console.log('failure', response); }
+                );
+            } else {
+                element.text = src_urls[attrs.prismUrl];
+                Prism.highlightElement(element[0]);
+            }
+            /*$scope.$watch(function() { return element[0].innerHTML; },*/
+                /*function(newval) { Prism.highlightElement(element[0]); },*/
+                /*true);*/
+            /*element.ready(function() {*/
+                /*Prism.highlightElement(element[0]);*/
+            /*});*/
+        }
+    };
+}]);
+        </script>
+        -->
         <style>
+.line-hilite {
+	background: gold;
+}
+
 body {
     font-family: "sans-serif", "Verdana Sans", "Helvetica Sans";
     -webkit-font-smoothing: antialiased;
@@ -15,19 +69,20 @@ body {
 .bgred { background-color: red; }
 .bold { font-weight: bold; border: 1px solid red; }
 .header { height: 80px; }
-.left-sidebar { width: 130px; }
+.left-sidebar { width: 10%; }
+.slide { width: 90%; }
 /*.right-sidebar { width: 1px; border: 0; }*/
-/*.footer { height: 5px; border: 0; }*/
+.footer { height: 5px; border: 0; }
 td:empty { height: 0px; width: 0px; background: #000000; }
 div.block {
     border-radius: 2em / 2em;
 }
 
 .slide-bullets {
-    display: inline-block;
+    display: block;
     padding-left: 5px;
-    /*position: relative;*/
-    /*top: -7px;*/
+    position: relative;
+    top: -7px;
 }
 
 ul.updown { list-style: none; padding: 0; }
@@ -57,7 +112,22 @@ table.presentation {
     min-width: 800px;
     height: 600px;
     width: 800px;
+    /*border: dashed .5px black;*/
+    border-collapse: collapse;
+    background: white;
 }
+td {
+    /*border: dashed 1px black;*/
+    border-collapse: collapse;
+}
+div.slide {
+    /*border: solid 1px red;*/
+    width: 100%;
+}
+
+body { background: black; }
+
+pre { padding: .2em; }
         </style>
     </head>
 
@@ -73,16 +143,17 @@ table.presentation {
             author="Damien Leroux"
             where="on the Web"
             date="31 dec 2015"
+			debug-adjustbox
             >
             <title>
             </title>
             <section title="Why ng-pres?">
                 <slide>
                     <small><p style="text-align: center">Use the left and right arrow keys to navigate this presentation</p></small>
-                    <block title="Let's take a look at the existing options">
+                    <block title="Let's take a look at the existing options" class="fade">
                     <!--<adjustbox virtual-aspect="1.33333" virtual-width="800" width="300" height="200" style="width: 300px; height: 200px;">-->
                     <ul>
-                        <li>Office suites
+                        <li visible="1-">Office suites
                             <ul class="updown">
                                 <li class="up">WYSIWIG</li>
                                 <li class="up">can embed multimedia content more or less easily</li>
@@ -90,32 +161,33 @@ table.presentation {
                                 <li class="down">Lack of global consistency in styling (ever seen these sizes change from slide to slide?)</li>
                             </ul>
                         </li>
-                        <li>beamer
+                        <li visible="2-">beamer
                             <ul class="updown">
                                 <li class="up">Good global consistency in styling</li>
                                 <li class="up">Great with math formulae</li>
-                                <li class="down">Bugs</li>
+                                <li class="down">lots of known <strike>features</strike>bugs</li>
                                 <li class="down">Tedious</li>
+                                <li class="down">Very multimedia unfriendly</li>
                             </ul>
                         </li>
-                        <li>Flash
+                        <li visible="3-">Flash
                             <ul class="updown">
                                 <li class="down">Seriously?</li>
                             </ul>
                         </li>
                     </ul>
                     </block>
-                    <block title="Why not HTML then?" visible="2-">
+                </slide>
+                <slide>
+                    <block title="Why not HTML then?" class="fade">
                         <ul class="updown">
                             <li class="up">HTML ensures proper styling and simple structuration of contents</li>
                             <li class="up">Lots of JS libraries to embed dynamic contents, plots, even Te&chi;-style equations</li>
-                            <li class="down">But... it's static!</li>
+                            <li class="down">But... it's static! You don't want to write JS code, you want to write a presentation!</li>
                             <li class="down">and varies slightly from browser to browser, although it's getting better.</li>
                         </ul>
                     </block>
-                </slide>
-                <slide>
-                    <block title="This is where AngularJS comes in">
+                    <block title="This is where AngularJS comes in" visible="2">
                         <p><em>ng-pres</em> defines a number of new HTML elements and attributes to help write presentations in the most comfortable way.</p>
                         <p>It also implements the controls so you can go through the slides without the need for generating another file or using another application than a browser.</p>
                     </block>
@@ -125,6 +197,27 @@ table.presentation {
                 <slide>
                     <p>pouet</p>
                 </slide>
+                <section title="Hello, world!">
+                    <slide>
+                        <block title="A short example">
+                            <a href="helloworld.html" target="_blank">View it in action</a>
+                            <adjustbox maintain-aspect style="width: 100%; height: 40%;">
+								<hello-src visible="1"></hello-src>
+								<hello-src visible="2" line-hilite="1"></hello-src>
+								<hello-src visible="3" line-hilite="3,4,5"></hello-src>
+								<hello-src visible="4" line-hilite="6,7"></hello-src>
+								<hello-src visible="5" line-hilite="10"></hello-src>
+								<hello-src visible="6" line-hilite="11"></hello-src>
+                            </adjustbox>
+							<p visible="1">This is a simple "Hello world!" example. It doesn't do much and only contains one bare frame. Let's take a closer look at the code.</p>
+							<p visible="2">First, you have to declare the angular app.</p>
+							<p visible="3">Include Angular 1.x</p>
+							<p visible="4">Include ng-pres, javascript and CSS</p>
+							<p visible="5">The <code>&lt;presentation&gt;</code> tag is where it all happens.</p>
+							<p visible="6">The <code>&lt;slide&gt;</code> tag declares a new frame in which you put your contents.</p>
+                        </block>
+                    </slide>
+                </section>
                 <section title="tralala">
                     <slide>
                         <p>toto</p>
@@ -139,7 +232,7 @@ table.presentation {
             <header>
                 <h1>ng-pres: write your presentation slides with HTML</h1>
                 <h2>powered by AngularJS</h2>
-                <progress-bar/>
+                <progress-bar granularity="step"/>
             </header>
             <left-sidebar>
                 <render-toc current-class="bold"/>
@@ -148,10 +241,6 @@ table.presentation {
                 <default-footer/>
             </footer>
         </presentation>
-        <div onLoad="console.log(this);">
-        </div>
-        <!--
-    </div></div>
-            -->
+		<!--<script>hljs.initHighlightingOnLoad();</script>-->
     </body>
 </html>
