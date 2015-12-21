@@ -120,7 +120,7 @@ var app = angular.module('ngPres', ['hljs'])
 //*/
 })
 
-.directive('presentation', ['$document', '$rootScope', '$sce', function($document, $rootScope, $sce) {
+.directive('presentation', ['$document', '$rootScope', '$sce', '$timeout', function($document, $rootScope, $sce, $timeout) {
     return {
         restrict: 'E',
         /*transclude: {*/
@@ -131,29 +131,41 @@ var app = angular.module('ngPres', ['hljs'])
         /*},*/
         transclude: true,
         //templateUrl: "presentation.html", //'<div class="presentation"><ng-transclude></ng-transclude></div>',
-        template: '<adjustbox maintain-aspect style="width: 100%; height: 100%;"><ng-transclude/></adjustbox><div class="hidden" id="to_print">{{setup_print()}}</div>',
-        link: function(scope, element, attr) {
-            /*console.log('setting up keydown event callback');*/
-            $document.bind('keydown', function(e) {
-                /*console.log('Got keydown:', e.keyCode);*/
-                $rootScope.$broadcast('keydown', e);
-                $rootScope.$broadcast('keydown:' + e.keyCode, e);
-                /*scope.$digest();*/
-            });
+        /*template: '<adjustbox maintain-aspect style="width: 100%; height: 100%;"><ng-transclude/></adjustbox><to-print class="hidden" id="to_print" ng-bind-html="setup_print()"></to-print>',*/
+        /*template: '<adjustbox maintain-aspect style="width: 100%; height: 100%;"><ng-transclude/></adjustbox><to-print/>',*/
+        template: `<div ng-class="{'showcase': showcasing, 'full': !showcasing}"><adjustbox maintain-aspect style="width: 100%; height: 100%;"><ng-transclude/></adjustbox></div>`,
+        link: {
+            pre: function(scope, element, attr) {
+                console.log("presentation pre link");
+                scope.backup_match_slide = scope.match_slide;
+                scope.match_slide = function(s) { return true; };
+            },
+            post: function(scope, element, attr) {
+                console.log("presentation post link");
+                /*console.log('setting up keydown event callback');*/
+                $document.bind('keydown', function(e) {
+                    console.log('Got keydown:', e.keyCode);
+                    $rootScope.$broadcast('keydown', e);
+                    $rootScope.$broadcast('keydown:' + e.keyCode, e);
+                    /*scope.$digest();*/
+                });
 
-            scope.all_footer = element.find('footer');
-            scope.footer = function() { return $sce.trustAsHtml(scope.all_footer.html()); };
+                scope.all_footer = element.find('footer');
+                scope.footer = function() { return $sce.trustAsHtml(scope.all_footer.html()); };
 
-            scope.all_header = element.find('header');
-            scope.header = function() { return $sce.trustAsHtml(scope.all_header.html()); };
+                scope.all_header = element.find('header');
+                scope.header = function() { return $sce.trustAsHtml(scope.all_header.html()); };
 
-            scope.all_leftSidebar = element.find('left-sidebar');
-            scope.leftSidebar = function() { return $sce.trustAsHtml(scope.all_leftSidebar.html()); };
+                scope.all_leftSidebar = element.find('left-sidebar');
+                scope.leftSidebar = function() { return $sce.trustAsHtml(scope.all_leftSidebar.html()); };
 
-            scope.all_rightSidebar = element.find('right-sidebar');
-            scope.rightSidebar = function() { return $sce.trustAsHtml(scope.all_rightSidebar.html()); };
+                scope.all_rightSidebar = element.find('right-sidebar');
+                scope.rightSidebar = function() { return $sce.trustAsHtml(scope.all_rightSidebar.html()); };
 
-            scope.all_slides = element.find('slide');
+                scope.all_slides = element.find('slide');
+                scope.match_slide = scope.backup_match_slide;
+                scope.backup_match_slide = null;
+            },
         },
         /*link: {*/
             /*pre: function(scope, element, attr, controller) {*/
@@ -178,6 +190,8 @@ var app = angular.module('ngPres', ['hljs'])
             $scope.steps_by_slide = [];
             $scope.TOC = {title:'', slides: [], children: []};
 
+            $scope.showcasing = false;
+
             var hash = $location.hash(),
                 parts = hash.split(':').map(Number);
             if (parts.length == 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
@@ -196,6 +210,23 @@ var app = angular.module('ngPres', ['hljs'])
                 }
             };
 
+            $scope.slide_list = function() {
+                var ret = [];
+                for (var i = 0; i < $scope.all_slides.length; ++i) {
+                    for (var s = 0; s <= $scope.steps_by_slide[i]; ++s) {
+                        ret.push([i, s]);
+                    }
+                }
+                console.log("slide_list", ret);
+                return ret;
+            };
+
+            $scope.slide_html = function(i) {
+                var html = angular.element($scope.all_slides[i]).html();
+                console.log("slide_html", i);
+                return $sce.trustAsHtml(html);
+            };
+
             $scope.previous_slide = function() {
                 if ($scope.current_slide > 0) {
                     /*console.log('previous slide!');*/
@@ -207,10 +238,12 @@ var app = angular.module('ngPres', ['hljs'])
                 if ($scope.current_step > 0) {
                     $scope.current_step -= 1;
                     $scope.global_step -= 1;
+                    $rootScope.$digest();  /* ensure adjustboxes are properly computed */
                 } else if ($scope.current_slide > 0) {
                     $scope.current_slide -= 1;
                     $scope.current_step = $scope.steps_by_slide[$scope.current_slide];
                     $scope.global_step -= 1;
+                    $rootScope.$digest();  /* ensure adjustboxes are properly computed */
                 }
                 $location.hash($scope.current_slide + ':' + $scope.current_step);
             };
@@ -219,26 +252,96 @@ var app = angular.module('ngPres', ['hljs'])
                 if ($scope.current_step < $scope.steps_by_slide[$scope.current_slide]) {
                     $scope.current_step += 1;
                     $scope.global_step += 1;
+                    $rootScope.$digest();  /* ensure adjustboxes are properly computed */
                 } else if ($scope.current_slide < ($scope.slide_count - 1)) {
                     $scope.current_step = 0;
                     $scope.current_slide += 1;
                     $scope.global_step += 1;
+                    $rootScope.$digest();  /* ensure adjustboxes are properly computed */
                 }
                 $location.hash($scope.current_slide + ':' + $scope.current_step);
             };
             
-            var single_slide = opt_attr($element, 'single-slide', '').split(':').map(Number);
-            if (single_slide.length == 2) {
-                $scope.current_slide = single_slide[0];
-                $scope.current_step = single_slide[1];
-            } else {
-                $scope.$on('keydown:37', function(onEvent, keypressEvent) {
-                    $scope.$apply($scope.previous_step());
-                });
-                $scope.$on('keydown:39', function(onEvent, keypressEvent) {
-                    $scope.$apply($scope.next_step());
-                });
-            }
+            $scope.$on('keydown:37' /* left arrow */, function(onEvent, keypressEvent) {
+                $scope.$apply($scope.previous_step());
+            });
+            $scope.$on('keydown:39' /* right arrow */, function(onEvent, keypressEvent) {
+                $scope.$apply($scope.next_step());
+            });
+            $scope.$on('keydown:80' /* p */, function(onEvent, keypressEvent) {
+                var parts = [];
+                var append = function() {
+                    $rootScope.$digest();
+                    parts.push($element.html());
+                    $timeout(next);
+                };
+                var backup_cs = $scope.current_step, backup_gs = $scope.global_step, backup_cl = $scope.current_slide;
+                var init = function() {
+                    $scope.current_step = $scope.global_step = $scope.current_slide = 0;
+                    $scope.showcasing = true;
+                    $timeout(append);
+                };
+                var deinit = function() {
+                    $scope.current_step = backup_cs;
+                    $scope.current_slide = backup_cl;
+                    $scope.global_step = backup_gs;
+                    $scope.showcasing = false;
+                    /*$rootScope.$digest();*/
+                }
+                var next = function() {
+                    if (!(($scope.current_slide == $scope.slide_count - 1) && ($scope.current_step == $scope.steps_by_slide[$scope.current_slide]))) {
+                        $scope.next_step();
+                        $timeout(append, 10);
+                    } else {
+                        var w = window.open();
+                        /*var links = angular.element(document.head).find('link');*/
+                        /*for (var i = 0; i < document.head.children.length; ++i) {*/
+                            /*console.log("transferring head child #" + i, document.head.children[i]);*/
+                            /*w.document.head.appendChild(document.head.children[i].cloneNode());*/
+                        /*}*/
+                        /*var doc = Document();*/
+                        /*console.log("other doc", angular.element(w.document));*/
+                        /*console.log("found links", links);*/
+                        /*angular.element(doc.head).html(angular.element(document.head).html());*/
+                        /*angular.element(doc.body).html(parts.join(''));*/
+                        w.document.write('<html><head>');
+                        w.document.write(angular.element(document.head).html());
+                        w.document.write('</head><body>');
+                        w.document.write(parts.join(''));
+                        /*w.document.write('<script type="text/javascript">window.setTimeout(function() { window.print(); }, 10);</script>');*/
+                        w.document.write('</body></html>');
+                        w.document.close();
+                        $timeout(deinit);
+                    }
+                };
+                $timeout(init);
+                /*angular.element(w.document.head).html(links.html());*/
+                /*var parts = ['<html>', document.head.outerHTML, '<body>'];*/
+                /*parts.push('<p>Toto</p>');*/
+                /*parts.push('</body></html>');*/
+                /*console.log(parts);*/
+                /*w.document).html(parts.join(''));*/
+/*
+                var parts = [];
+                angular.element(w.document.head).html(document.head.innerHTML + '<style>body { background: none; }</style>');
+                var frames = angular.element(document.body).find('to-print').children();
+                for (var i = 0; i < frames.length; ++i) {
+                    parts.push(frames[i].outerHTML);
+                }
+*/
+            });
+
+            $scope.all_slides = [];
+
+            $scope.setup_print = function() {
+                var ret = [];
+                for (var i = 0; i < $scope.all_slides.length; ++i) {
+                    for (var step = 0; step <= $scope.steps_by_slide[i]; ++step) {
+                        ret.push('<showcase slide="' + i + '" step="' + step + '">' + $scope.all_slides[i].outerHTML + '</showcase>');
+                    }
+                }
+                return $sce.trustAsHtml(ret.join(''));
+            };
 
             $scope.match_step = function(steps) {
                 return steps.filter(function(range) { return range[0] <= $scope.current_step && range[1] >= $scope.current_step; }).length > 0;
@@ -294,10 +397,14 @@ var app = angular.module('ngPres', ['hljs'])
                 for (var i = 0; i < $scope.steps_by_slide.length; ++i) {
                     $scope.step_count += 1 + $scope.steps_by_slide[i];
                 }
-                /*console.log("ensure_steps///steps_by_slide", $scope.steps_by_slide, $scope.step_count);*/
+                console.log("ensure_steps///steps_by_slide", steps);
+                console.log($scope.steps_by_slide, $scope.step_count);
             }
 
             this.get_toc = function() { /*console.log('get_toc'); console.log($scope.TOC);*/ return $scope.TOC; };
+
+            this.get_scope = function() { return $scope; };
+
             console.log($scope);
         }]
     };
@@ -370,7 +477,7 @@ var app = angular.module('ngPres', ['hljs'])
                 scope.slide_index = presentation.add_slide();
                 /*scope.current_slide = function() { return presentation.current_slide(); };*/
                 console.log("LINKED SLIDE #" + scope.slide_index);
-                presentation.ensure_steps(scope.slide_index, []);
+                presentation.ensure_steps([]);
             },
         },
         /*controller: function() {},*/
@@ -378,6 +485,7 @@ var app = angular.module('ngPres', ['hljs'])
         /*templateUrl: 'frame.html'*/
         template: `
              <div ng-class="{'hidden': !match_slide(slide_index)}">
+             <!--<div ng-if="match_slide(slide_index)">-->
                <table class="presentation">
                  <tbody>
                    <tr><td class="header" colspan="3"><div class="header" ng-bind-html="header()"></div></td></tr>
@@ -391,6 +499,44 @@ var app = angular.module('ngPres', ['hljs'])
                </table>
              </div>
              `
+    };
+})
+.directive('toPrint', function() {
+    return {
+        restrict: 'E',
+        scope: {},
+        require: '^presentation',
+        link: function(scope, element, attr, presentation) {
+            scope.presentation = presentation.get_scope();
+        },
+        template: `
+            <div ng-repeat="slide_step in presentation.slide_list()">
+                <showcase slide="{{slide_step[0]}}" step="{{slide_step[1]}}" ng-bind-html="presentation.slide_html(slide_step[0])"/>
+            </div>
+        `,
+    };
+})
+.directive('showcase', function() {
+    return {
+        restrict: 'E',
+        transclude: true,
+        /*scope: {},*/
+        link: function(scope, element, attr) {
+            console.log("showcase parent scope", scope.$parent);
+            scope.current_slide = Number(attr.slide);
+            scope.current_step = Number(attr.step);
+            scope.match_step = function(x) { return x == scope.current_step; };
+            scope.match_slide = function(x) { return true; };
+
+            scope.global_step = 1 + scope.current_step;
+            for (var i = 0; i < scope.current_slide; ++i) {
+                scope.global_step += 1 + scope.$parent.$parent.steps_by_slide[i];
+            }
+            scope.slide_count = 0;
+            console.log("showcase scope", scope);
+        },
+        template:
+            `<div class="showcase"><adjustbox maintain-aspect style="width: 100%; height: 100%;"><ng-transclude/></adjustbox></div>`
     };
 })
 .directive('visible', ['$animate', function($animate) {

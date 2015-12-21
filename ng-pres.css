@@ -55,7 +55,7 @@ div.right-sidebar {
 
 html,body {
     height:100%;
-    overflow: hidden;
+    /*overflow: hidden;*/
 }
 
 ul.toc {
