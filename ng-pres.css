@@ -23,7 +23,7 @@ body {
     /*transform: matrix(.5, 0, 0,*/
                       /*0,   .5, 0,*/
                       /*0,   0, 1);*/
-    background: white;
+    background: white !important;
     font-size: 16pt; /* normal */
 }
 
@@ -220,15 +220,15 @@ table.presentation td.slide {
 
 div.block {
     /*border-radius: 2em 1em 4em / 0.5em 3em;*/
-    border: 1px solid lightgreen;
+    border: 1px solid lightgreen !important;
     overflow: hidden;
     margin: 2em;
 }
 
 div.block div.block-title {
-    border-top: 1px solid lightgreen;
-    border-left: 1px solid lightgreen;
-    border-right: 1px solid lightgreen;
+    border-top: 1px solid lightgreen !important;
+    border-left: 1px solid lightgreen !important;
+    border-right: 1px solid lightgreen !important;
     border-radius; 50px;
     background-color: lightgreen;
     padding: 1em;
@@ -236,9 +236,9 @@ div.block div.block-title {
 }
 
 div.block div.block-content {
-    border-bottom: 1px solid lightgreen;
-    border-left: 1px solid lightgreen;
-    border-right: 1px solid lightgreen;
+    border-bottom: 1px solid lightgreen !important;
+    border-left: 1px solid lightgreen !important;
+    border-right: 1px solid lightgreen !important;
     border-radius; 50px;
     padding: 1em;
     padding-top: .5em;
