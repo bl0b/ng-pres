@@ -133,7 +133,21 @@ var app = angular.module('ngPres', ['hljs'])
         //templateUrl: "presentation.html", //'<div class="presentation"><ng-transclude></ng-transclude></div>',
         /*template: '<adjustbox maintain-aspect style="width: 100%; height: 100%;"><ng-transclude/></adjustbox><to-print class="hidden" id="to_print" ng-bind-html="setup_print()"></to-print>',*/
         /*template: '<adjustbox maintain-aspect style="width: 100%; height: 100%;"><ng-transclude/></adjustbox><to-print/>',*/
-        template: `<div ng-class="{'showcase': showcasing, 'full': !showcasing}"><adjustbox maintain-aspect style="width: 100%; height: 100%;"><ng-transclude/></adjustbox></div>`,
+        template: `
+            <span><div ng-class="{'showcase': showcasing, 'full': !showcasing}">
+                <adjustbox maintain-aspect style="width: 100%; height: 100%;">
+                    <ng-transclude/>
+                </adjustbox>
+            </div></span>
+            <div ng-if="showcasing" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 1000;">
+                <div style="position: absolute; top: 50%; left: 50%; width: 20%; height: 20%; margin-top: -10%; margin-left: -10%;">
+                    <adjustbox maintain-aspect style="width: 100%; height: 100%;">
+                        <h1>Preparing...</h1>
+                        <progress-bar style="width: 100%;"/>
+                    </adjustbox>
+                </div>
+            </div>
+        `,
         link: {
             pre: function(scope, element, attr) {
                 console.log("presentation pre link");
@@ -165,6 +179,7 @@ var app = angular.module('ngPres', ['hljs'])
                 scope.all_slides = element.find('slide');
                 scope.match_slide = scope.backup_match_slide;
                 scope.backup_match_slide = null;
+                $rootScope.$digest();
             },
         },
         /*link: {*/
@@ -192,16 +207,18 @@ var app = angular.module('ngPres', ['hljs'])
 
             $scope.showcasing = false;
 
-            var hash = $location.hash(),
-                parts = hash.split(':').map(Number);
-            if (parts.length == 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
-                $scope.current_slide = parts[0];
-                $scope.current_step = parts[1];
-                $scope.global_step = 1 + $scope.current_step;
-                for (var i = 0; i <= $scope.current_slide; ++i) {
-                    $scope.global_step += 1 + $scope.steps_by_slide[i];
+            $timeout(function() {
+                var hash = $location.hash(),
+                    parts = hash.split(':').map(Number);
+                if (parts.length == 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+                    $scope.current_slide = parts[0];
+                    $scope.current_step = parts[1];
+                    $scope.global_step = $scope.current_step;
+                    for (var i = 0; i < $scope.current_slide; ++i) {
+                        $scope.global_step += 1 + $scope.steps_by_slide[i];
+                    }
                 }
-            }
+            });
 
             $scope.next_slide = function() {
                 if ($scope.current_slide < ($scope.slide_count - 1)) {
@@ -269,79 +286,46 @@ var app = angular.module('ngPres', ['hljs'])
                 $scope.$apply($scope.next_step());
             });
             $scope.$on('keydown:80' /* p */, function(onEvent, keypressEvent) {
+                var cont = function(fn) { $timeout(fn); };
                 var parts = [];
                 var append = function() {
                     $rootScope.$digest();
-                    parts.push($element.html());
-                    $timeout(next);
+                    parts.push($element.find('span').html());
+                    cont(next);
                 };
                 var backup_cs = $scope.current_step, backup_gs = $scope.global_step, backup_cl = $scope.current_slide;
                 var init = function() {
                     $scope.current_step = $scope.global_step = $scope.current_slide = 0;
                     $scope.showcasing = true;
-                    $timeout(append);
+                    cont(append);
                 };
                 var deinit = function() {
                     $scope.current_step = backup_cs;
                     $scope.current_slide = backup_cl;
                     $scope.global_step = backup_gs;
                     $scope.showcasing = false;
-                    /*$rootScope.$digest();*/
+                    $location.hash($scope.current_slide + ':' + $scope.current_step);
+                    $rootScope.$digest();
                 }
                 var next = function() {
                     if (!(($scope.current_slide == $scope.slide_count - 1) && ($scope.current_step == $scope.steps_by_slide[$scope.current_slide]))) {
                         $scope.next_step();
-                        $timeout(append, 10);
+                        cont(append);
                     } else {
                         var w = window.open();
-                        /*var links = angular.element(document.head).find('link');*/
-                        /*for (var i = 0; i < document.head.children.length; ++i) {*/
-                            /*console.log("transferring head child #" + i, document.head.children[i]);*/
-                            /*w.document.head.appendChild(document.head.children[i].cloneNode());*/
-                        /*}*/
-                        /*var doc = Document();*/
-                        /*console.log("other doc", angular.element(w.document));*/
-                        /*console.log("found links", links);*/
-                        /*angular.element(doc.head).html(angular.element(document.head).html());*/
-                        /*angular.element(doc.body).html(parts.join(''));*/
                         w.document.write('<html><head>');
                         w.document.write(angular.element(document.head).html());
                         w.document.write('</head><body>');
                         w.document.write(parts.join(''));
-                        /*w.document.write('<script type="text/javascript">window.setTimeout(function() { window.print(); }, 10);</script>');*/
                         w.document.write('</body></html>');
                         w.document.close();
-                        $timeout(deinit);
+                        cont(deinit);
                     }
                 };
-                $timeout(init);
-                /*angular.element(w.document.head).html(links.html());*/
-                /*var parts = ['<html>', document.head.outerHTML, '<body>'];*/
-                /*parts.push('<p>Toto</p>');*/
-                /*parts.push('</body></html>');*/
-                /*console.log(parts);*/
-                /*w.document).html(parts.join(''));*/
-/*
-                var parts = [];
-                angular.element(w.document.head).html(document.head.innerHTML + '<style>body { background: none; }</style>');
-                var frames = angular.element(document.body).find('to-print').children();
-                for (var i = 0; i < frames.length; ++i) {
-                    parts.push(frames[i].outerHTML);
-                }
-*/
+                cont(init);
             });
 
             $scope.all_slides = [];
-
-            $scope.setup_print = function() {
-                var ret = [];
-                for (var i = 0; i < $scope.all_slides.length; ++i) {
-                    for (var step = 0; step <= $scope.steps_by_slide[i]; ++step) {
-                        ret.push('<showcase slide="' + i + '" step="' + step + '">' + $scope.all_slides[i].outerHTML + '</showcase>');
-                    }
-                }
-                return $sce.trustAsHtml(ret.join(''));
-            };
 
             $scope.match_step = function(steps) {
                 return steps.filter(function(range) { return range[0] <= $scope.current_step && range[1] >= $scope.current_step; }).length > 0;
@@ -501,6 +485,7 @@ var app = angular.module('ngPres', ['hljs'])
              `
     };
 })
+/*
 .directive('toPrint', function() {
     return {
         restrict: 'E',
@@ -520,7 +505,7 @@ var app = angular.module('ngPres', ['hljs'])
     return {
         restrict: 'E',
         transclude: true,
-        /*scope: {},*/
+        /*scope: {},* /
         link: function(scope, element, attr) {
             console.log("showcase parent scope", scope.$parent);
             scope.current_slide = Number(attr.slide);
@@ -538,7 +523,7 @@ var app = angular.module('ngPres', ['hljs'])
         template:
             `<div class="showcase"><adjustbox maintain-aspect style="width: 100%; height: 100%;"><ng-transclude/></adjustbox></div>`
     };
-})
+})*/
 .directive('visible', ['$animate', function($animate) {
     /* Copied and lightly adapted from the source of ng-if */
   return {
@@ -696,7 +681,7 @@ var app = angular.module('ngPres', ['hljs'])
         },
         template: `
             <div class="{{class}}" style="align: center; overflow: hidden; position: relative; padding: {{debug_adjustbox ? '-1px' : '0'}}; border: {{debug_adjustbox ? '1px solid rgba(255,0,0,.5)' : '0'}}; {{style}}"><!-- positioning container -->
-                <div style="transform-origin: 0 0; transform: translate({{translate_x}}px, {{translate_y}}px) scale({{scale_x}}, {{scale_y}}); position: absolute; width: 100vw; height: 100vh; overflow: hidden;"><!-- resizing container -->
+                <div style="transform-origin: 0 0; transform: translate({{translate_x}}px, {{translate_y}}px) scale({{scale_x}}, {{scale_y}}) !important; position: absolute; width: 100vw; height: 100vh; overflow: hidden;"><!-- resizing container -->
                     <div style="display: inline-block;" ng-transclude></div>
                 </div>
                 <pre ng-if="debug_adjustbox" style="position: absolute; top: 0; left: 0; border: 0; background: rgba(128, 128, 128, .7); padding: 0 2px; margin: 0;">scale({{scale_x.toFixed(2)}}, {{scale_y.toFixed(2)}}) +{{translate_x.toFixed(2)}},{{translate_y.toFixed(2)}}</pre>
