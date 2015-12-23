@@ -97,11 +97,7 @@ div.showcase {
 	margin-bottom: 9pt;
 	border: 2pt solid blue;
 	display: inline-block;
-}
-
-div.full {
-	width: 100%;
-	height: 100%;
+    background: none;
 }
 
 ul.updown { list-style: none; padding: 0; }
@@ -157,20 +153,40 @@ pre { padding: .2em; }
             -->
 			<!--
 			debug-adjustbox
+            title="ng-pres: write your presentation slides with HTML"
+            subtitle="powered by AngularJS"
 			-->
         <presentation
             slide-bullet="&EmptyVerySmallSquare;"
-            slide-bullet-active="&FilledVerySmallSquare;"
+            active-slide-bullet="&FilledVerySmallSquare;"
             toc-hilight="pouet"
             author="Damien Leroux"
             where="on the Web"
             date="31 dec 2015"
+            hide-cursor
             >
-            <title>
-            </title>
+            <!--<page role="title">
+                <div style="text-align: center; background: white;">
+                    <title/>
+                    <subtitle/>
+                    <small><p style="text-align: center">Use the left and right arrow keys to navigate this presentation</p></small>
+                </div>
+                <footer>
+                    <default-footer/>
+                </footer>
+                </page>-->
+            <slide no-header no-sidebar no-slide-counter>
+                <centered>
+                    <h1>ng-pres: write your presentation slides with HTML</h1>
+                    <h2>powered by AngularJS</h2>
+                    <p>&nbsp;</p>
+                    <p>A presentation by {{talk_author}}</p>
+                    <p>&nbsp;</p>
+                    <small><p>Use the left and right arrow keys to navigate this presentation</p></small>
+                </centered>
+            </slide>
             <section title="Why ng-pres?">
                 <slide>
-                    <small><p style="text-align: center">Use the left and right arrow keys to navigate this presentation</p></small>
                     <block title="Let's take a look at the existing options" class="fade">
                     <!--<adjustbox virtual-aspect="1.33333" virtual-width="800" width="300" height="200" style="width: 300px; height: 200px;">-->
                     <ul>
@@ -215,8 +231,10 @@ pre { padding: .2em; }
                 </slide>
             </section>
             <section title="Using ng-pres">
-                <slide>
-                    <p>pouet</p>
+                <slide no-header no-sidebar>
+                    <centered>
+                        <p class="big">Let's take a look at a minimalistic example first.</p>
+                    </centered>
                 </slide>
                 <section title="Hello, world!">
                     <slide>
@@ -250,17 +268,17 @@ pre { padding: .2em; }
                     </section>
                 </section>
             </section>
-            <header>
+            <slide-header>
                 <h1>ng-pres: write your presentation slides with HTML</h1>
                 <h2>powered by AngularJS</h2>
                 <progress-bar granularity="step"/>
-            </header>
-            <left-sidebar>
+            </slide-header>
+            <slide-left-sidebar>
                 <render-toc current-class="bold"/>
-            </left-sidebar>
-            <footer>
+            </slide-left-sidebar>
+            <slide-footer>
                 <default-footer/>
-            </footer>
+            </slide-footer>
         </presentation>
 		<!--<script>hljs.initHighlightingOnLoad();</script>-->
     </body>
