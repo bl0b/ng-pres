@@ -4,6 +4,8 @@ html, body, div, span, a, p, table, td, tr, tbody, thead, th, h1, h2, h3, h4, h5
     border-collapse: collapse;
     border-spacing: 0px;
     background: none;
+	/*-webkit-margin-before: 0;*/
+	/*-webkit-margin-after: 0;*/
 }
 
 .hidden { display: none; visibility: hidden; }
@@ -93,12 +95,19 @@ ul.toc ul.toc ul.toc {
 	position: relative;
 }
 
-.toc-item {
+.inactive-toc-item {
     font-weight: normal;
+	font-style: normal;
 }
 
 .current-toc-item {
     font-weight: bold;
+	font-style: normal;
+}
+
+.current-toc-item-parent {
+    font-weight: bold;
+	font-style: italic;
 }
 
 div.slide {
