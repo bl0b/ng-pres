@@ -20,42 +20,6 @@ app.directive("helloSrc", [function() {
 	};
 }]);
 		</script>
-        <!--
-        <script type="text/javascript" src="3rd-party/prism.js"></script>
-        <link rel="stylesheet" type="text/css" href="3rd-party/prism.css"/>
-        <script type="text/javascript">
-var app = angular.module('prism', [])
-.directive('prismUrl', ['$http', function($http) {
-    return {
-        restrict: 'A',
-        transclude: true,
-        link: function ($scope, element, attrs) {
-            if (src_urls[attrs.prismUrl] === undefined) {
-                $http.get(attrs.prismUrl).then(
-                    function(response) {
-                        src_urls[attrs.prismUrl] = response.data;
-                        console.log('success', src_urls[attrs.prismUrl]);
-                        console.log("element", element[0]);
-                        element[0].text = src_urls[attrs.prismUrl];
-                        Prism.highlightElement(element[0]);
-                    },
-                    function(response) { console.log('failure', response); }
-                );
-            } else {
-                element.text = src_urls[attrs.prismUrl];
-                Prism.highlightElement(element[0]);
-            }
-            /*$scope.$watch(function() { return element[0].innerHTML; },*/
-                /*function(newval) { Prism.highlightElement(element[0]); },*/
-                /*true);*/
-            /*element.ready(function() {*/
-                /*Prism.highlightElement(element[0]);*/
-            /*});*/
-        }
-    };
-}]);
-        </script>
-        -->
         <style>
 .line-hilite {
 	background: gold;
@@ -107,21 +71,6 @@ ul.updown li.down { color: red; }
 ul.updown li.up:before { content: "+"; padding-right: 8px; color: green; }
 ul.updown li.down:before { content: "-"; padding-right: 8px; color: red; }
 
-/*
-.wrapper-with-intrinsic-ratio {
-	position: relative;
-	padding-bottom: 20%;
-	height: 0;
-}
-.element-to-stretch {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	background: teal;	
-}
-*/
 table.presentation {
     min-height: 600px;
     min-width: 800px;
@@ -143,6 +92,34 @@ div.slide {
 body { background: black; }
 
 pre { padding: .2em; }
+
+/*.toc-item { display: inline-block; color: rgba(0,0,0,.5); }*/
+/*ul.toc { display: inline-block; }*/
+/*.toc-item { visibility: hidden; }*/
+.toc-page {
+	text-align: left;
+	margin-top: 25%;
+	margin-left: 40%;
+}
+
+div.toc-page .current-toc-item {
+	/*display: block; visibility: visible;*/
+	color: rgba(0,0,0,1);
+}
+div.toc-page .current-toc-item-parent {
+	/*display: block; visibility: visible;*/
+    font-weight: normal;
+	font-style: normal;
+	color: rgba(0,0,0,1);
+}
+
+div.toc-page .inactive-toc-item {
+	/*visibility: hidden;*/
+	/*width: 0;*/
+	/*height: 0;*/
+	/*overflow: hidden;*/
+	color: rgba(0,0,0,.5);
+}
         </style>
     </head>
 
@@ -155,6 +132,7 @@ pre { padding: .2em; }
 			debug-adjustbox
             title="ng-pres: write your presentation slides with HTML"
             subtitle="powered by AngularJS"
+            hide-cursor
 			-->
         <presentation
             slide-bullet="&EmptyVerySmallSquare;"
@@ -163,7 +141,6 @@ pre { padding: .2em; }
             author="Damien Leroux"
             where="on the Web"
             date="31 dec 2015"
-            hide-cursor
             >
             <!--<page role="title">
                 <div style="text-align: center; background: white;">
@@ -279,6 +256,11 @@ pre { padding: .2em; }
             <slide-footer>
                 <default-footer/>
             </slide-footer>
+			<on-section no-header no-sidebar no-slide-counter>
+				<div class="toc-page" style="">
+					<render-toc/>
+				</div>
+			</on-section>
         </presentation>
 		<!--<script>hljs.initHighlightingOnLoad();</script>-->
     </body>
