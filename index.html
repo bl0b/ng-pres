@@ -33,7 +33,7 @@ body {
 .bgred { background-color: red; }
 .bold { font-weight: bold; border: 1px solid red; }
 .header { height: 80px; }
-.left-sidebar { width: 10%; }
+.left-sidebar { width: 200px; }
 .slide { width: 90%; }
 /*.right-sidebar { width: 1px; border: 0; }*/
 .footer { height: 5px; border: 0; }
@@ -120,6 +120,28 @@ div.toc-page .inactive-toc-item {
 	/*overflow: hidden;*/
 	color: rgba(0,0,0,.5);
 }
+
+ul.toc { font-size: .9em; }
+
+table.struc {
+    border: 1px dashed black;
+    border-collapse: collapse;
+    width: 400px;
+    height: 300px;
+}
+table.struc td {
+    text-align: center;
+    vertical-align: middle;
+    border: 1px dashed black;
+    border-collapse: collapse;
+}
+table.struc td.vert {
+    transform-origin: 50% 50%;
+    transform: rotate(-90deg);
+    width: 50px;
+}
+
+table.struc td.horiz { height: 50px; }
         </style>
     </head>
 
@@ -172,15 +194,16 @@ div.toc-page .inactive-toc-item {
                                 <li class="up">WYSIWIG</li>
                                 <li class="up">can embed multimedia content more or less easily</li>
                                 <li class="down">Bugs</li>
-                                <li class="down">Lack of global consistency in styling (ever seen these sizes change from slide to slide?)</li>
+                                <li class="down">Lack of global consistency in styling (ever seen these sizes or positions change from slide to slide?)</li>
                             </ul>
                         </li>
                         <li visible="2-">beamer
                             <ul class="updown">
                                 <li class="up">Good global consistency in styling</li>
                                 <li class="up">Great with math formulae</li>
-                                <li class="down">lots of known <strike>features</strike>bugs</li>
+                                <li class="down">lots of <strike>known bugs</strike>features</li>
                                 <li class="down">Tedious</li>
+                                <li class="down">Also suffers from slight positioning changes from slide to slide.</li>
                                 <li class="down">Very multimedia unfriendly</li>
                             </ul>
                         </li>
@@ -197,13 +220,14 @@ div.toc-page .inactive-toc-item {
                         <ul class="updown">
                             <li class="up">HTML ensures proper styling and simple structuration of contents</li>
                             <li class="up">Lots of JS libraries to embed dynamic contents, plots, even Te&chi;-style equations</li>
+                            <li class="up">Ideal if your presentation is about something web-related</li>
                             <li class="down">But... it's static! You don't want to write JS code, you want to write a presentation!</li>
                             <li class="down">and varies slightly from browser to browser, although it's getting better.</li>
                         </ul>
                     </block>
                     <block title="This is where AngularJS comes in" visible="2">
                         <p><em>ng-pres</em> defines a number of new HTML elements and attributes to help write presentations in the most comfortable way.</p>
-                        <p>It also implements the controls so you can go through the slides without the need for generating another file or using another application than a browser.</p>
+                        <p>It also implements the controls and mechanisms so you can go through the slides without the need for compiling, generating another file or using any other application but a browser.</p>
                     </block>
                 </slide>
             </section>
@@ -234,15 +258,63 @@ div.toc-page .inactive-toc-item {
                         </block>
                     </slide>
                 </section>
-                <section title="tralala">
+                <section title="Document structure">
                     <slide>
-                        <p>toto</p>
+                        <block title="Structure of a slide">
+                            <table class="struc small">
+                                <tbody>
+                                    <tr><td colspan="3" class="horiz">header</td></tr>
+                                    <tr><td class="vert">left sidebar</td><td>contents area</td><td class="vert">right sidebar</td></tr>
+                                    <tr><td colspan="3" class="horiz">footer</td></tr>
+                                </tbody>
+                            </table>
+                            <p>The <code>header</code>, <code>left/right sidebar</code>, and <code>footer</code> sections are all optional and can also be disabled on specific slides.</p>
+                        </block>
                     </slide>
-                    <section title="subsubsub">
-                        <slide>
-                            <p>amroainevoaenvoeinv</p>
-                        </slide>
-                    </section>
+                </section>
+            </section>
+            <section title="Reference">
+                <section title="presentation">
+                </section>
+                <section title="slide-header">
+                </section>
+                <section title="slide-left-sidebar">
+                </section>
+                <section title="slide-right-sidebar">
+                </section>
+                <section title="slide-footer">
+                </section>
+                <section title="default-footer">
+                </section>
+                <section title="section">
+                </section>
+                <section title="slide">
+                </section>
+                <section title="block">
+                </section>
+                <section title="render-toc">
+                </section>
+                <section title="on-section">
+                </section>
+                <section title="visible">
+                </section>
+                <section title="progress-bar">
+                </section>
+                <section title="slide-counter">
+                </section>
+                <section title="talk-author">
+                </section>
+                <section title="talk-where">
+                </section>
+                <section title="talk-date">
+                </section>
+                <section title="title">
+                </section>
+                <section title="subtitle">
+                </section>
+                <section title="centered">
+                </section>
+                <section title="adjustbox">
                 </section>
             </section>
             <slide-header>
