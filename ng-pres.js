@@ -14,7 +14,7 @@
             if (ok) {
                 /*console.log(nodes[i], nodes[i].className, nodes[i].parentNode);*/
                 nodes[i].parentNode.removeChild(nodes[i]);
-                console.log("removing node #" + i, nodes[i]);
+                /*console.log("removing node #" + i, nodes[i]);*/
             } else if (nodes[i].childNodes !== undefined) {
                 trim_hidden(nodes[i].childNodes); }
         }
@@ -54,7 +54,7 @@
     }
 
 
-/* Copied from Angular source (angular.js +1794) */
+/* Copied from Angular source (angular.js +1794), dependency of ng-if (visible) */
 /**
  * Return the DOM siblings between the first and last node in the given array.
  * @param {Array} array like object
@@ -83,17 +83,21 @@ var TocEntry = function TocEntry(title) {
     this.title = title;
     this.slides = [];
     this.children = [];
+	this.own_slide = -1;
 };
 
 TocEntry.prototype = {
     add_slide: function(s) { this.slides.push(s); },
     contains: function(s) {
+		return this.own_slide == s || this.slides.indexOf(s) != -1;
+	},
+    child_contains: function(s) {
         /*console.log("contains " + s + "?", this);*/
-        if (this.slides.indexOf(s) != -1) {
-            return true;
-        }
+        /*if (this.slides.indexOf(s) != -1) {*/
+            /*return true;*/
+        /*}*/
         for (var i = 0; i < this.children.length; ++i) {
-            if (this.children[i].contains(s)) {
+            if (this.children[i].contains(s) ||  this.children[i].child_contains(s)) {
                 return true;
             }
         }
@@ -115,7 +119,7 @@ var app = angular.module('ngPres', [])
                        ng-repeat="s in item.slides">{{s == $parent.current_slide ? slideBulletActive : slideBullet}}</span>
              </div>
              <ul class="toc" ng-if="item.children.length > 0">
-                 <li ng-class="['toc-item', {'current-toc-item': item.contains($parent.current_slide)}]"
+                 <li ng-class="{'current-toc-item': item.contains($parent.current_slide), 'current-toc-item-parent': item.child_contains($parent.current_slide), 'inactive-toc-item': !(item.contains($parent.current_slide) || item.child_contains($parent.current_slide))}"
                      ng-repeat="item in item.children">
                      <ng-include src="'toc-item.html'"></ng-include>
                  </li>
@@ -209,6 +213,9 @@ var app = angular.module('ngPres', [])
                     /*scope.$digest();*/
                 });
 
+                scope.all_section_slide = element.find('on-section');
+                scope.section_slide = function() { return $sce.trustAsHtml(scope.all_section_slide.html()); };
+
                 scope.all_footer = element.find('slide-footer');
                 scope.footer = function() { return $sce.trustAsHtml(scope.all_footer.html()); };
 
@@ -250,6 +257,7 @@ var app = angular.module('ngPres', [])
             $scope.subtitle = opt_attr($element, 'subtitle', '');
             $scope.debug_adjustbox = $element[0].attributes['debug-adjustbox'] !== undefined;
             $scope.hide_cursor = $element[0].attributes['hide-cursor'] !== undefined;
+            /*$scope.use_section_slides = $element[0].attributes['with-section-slides'] !== undefined;*/
             /*attr = $element[0].attributes;*/
             /*$scope.slideBullet = attr['slide-bullet'].value;*/
             /*$scope.slideBulletActive = attr['active-slide-bullet'].value;*/
@@ -348,9 +356,9 @@ var app = angular.module('ngPres', [])
                 var append = function() {
                     $rootScope.$digest();
                     var main = [$element.find('span')[0].cloneNode(true)];
-                    console.log("main before", main);
+                    /*console.log("main before", main);*/
                     trim_hidden(main);
-                    console.log("main after", main);
+                    /*console.log("main after", main);*/
                     parts.push(angular.element(main).html());
                     /*parts.push(angular.element(document.querySelector('slide > div:not(.hidden)').parent).html());*/
                     cont(next);
@@ -398,6 +406,14 @@ var app = angular.module('ngPres', [])
                 return true;  // slide_index == $scope.current_slide;
             };
 
+			$scope.on_section = false;
+			$scope.on_section_slides = [];
+			$scope.is_on_section_slide = function() {
+				return $scope.on_section_slides.indexOf($scope.current_slide) != -1;
+			};
+
+			this.set_onSection = function() { $scope.on_section = true; };
+
             this.match_step = function(steps) { return $scope.match_step(steps); };
 
             this.current_slide = function() { return $scope.current_slide; };
@@ -413,6 +429,7 @@ var app = angular.module('ngPres', [])
                 var section = new TocEntry(title);  // {title: title, slides: [], children: []};
                 this.current_section().children.push(section);
                 this.section_stack.push(section);
+				$scope.on_section_slides.push(section.own_slide = this.add_slide($scope, false));
             };
 
             this.leave_section = function() {
@@ -420,10 +437,12 @@ var app = angular.module('ngPres', [])
                 this.section_stack.pop();
             };
 
-            this.add_slide = function(slide_scope) {
+            this.add_slide = function(slide_scope, not_section_page) {
                 var ret = $scope.slide_count;
                 $scope.slide_count += 1;
-                this.current_section().slides.push(ret);
+				if (not_section_page) {
+			        this.current_section().slides.push(ret);
+				}
                 /*$scope.all_steps.push([ret, 0]);*/
                 $scope.steps_by_slide[ret] = 0;
                 $scope.all_slide_scopes[ret] = slide_scope;
@@ -472,7 +491,7 @@ var app = angular.module('ngPres', [])
         template:
             `<div class="toc" ng-repeat="item in [$parent.TOC]">
                  <ul class="toc" ng-if="item.children.length > 0">
-                     <li ng-class="['toc-item', {'current-toc-item': item.contains($parent.current_slide)}]"
+					 <li ng-class="{'current-toc-item': item.contains($parent.current_slide), 'current-toc-item-parent': item.child_contains($parent.current_slide), 'inactive-toc-item': !(item.contains($parent.current_slide) || item.child_contains($parent.current_slide))}"
                          ng-repeat="item in item.children">
                          <ng-include src="'toc-item.html'"></ng-include>
                      </li>
@@ -520,7 +539,7 @@ var app = angular.module('ngPres', [])
                 presentation.leave_section();
             },
         },
-        template: '<ng-transclude/>',
+        template: '<span ng-if="$parent.on_section"><span ng-bind-html="$parent.section_slide()"></span></span><ng-transclude/>',
 //*/
     };
 })
@@ -540,7 +559,7 @@ var app = angular.module('ngPres', [])
                 scope.with_footer = attr.noFooter === undefined;
                 scope.disable_slide_counter = attr.noSlideCounter !== undefined;
 
-                scope.slide_index = presentation.add_slide(scope);
+                scope.slide_index = presentation.add_slide(scope, true);
                 /*scope.current_slide = function() { return presentation.current_slide(); };*/
                 presentation.ensure_steps([]);
             },
@@ -568,6 +587,45 @@ var app = angular.module('ngPres', [])
              </div>
              `
     };
+})
+
+.directive('onSection', function() {
+	return {
+		restrict: 'E',
+        transclude: true,
+		require: '^presentation',
+		scope: true,
+		priority: 1000,
+        link: {
+            pre: function(scope, element, attr, presentation) {
+				/*element.addClass('hidden');*/
+				scope.with_header = attr.noHeader === undefined;
+				scope.with_sidebar = attr.noSidebar === undefined;
+				scope.with_footer = attr.noFooter === undefined;
+				scope.disable_slide_counter = attr.noSlideCounter !== undefined;
+				presentation.set_onSection();
+			},
+			post: function(scope, element, attr, presentation) {
+                /*console.log("LINKED SLIDE #" + scope.slide_index + " counting " + (1 + scope.steps_by_slide[scope.slide_index]) + " steps");*/
+            }
+		},
+		template: `
+             <div ng-if="is_on_section_slide()">
+               <table class="presentation">
+                 <tbody>
+                   <tr ng-if="with_header"><td class="header" colspan="3"><div class="header" ng-bind-html="header()"></div></td></tr>
+                   <tr>
+                     <td ng-if="with_sidebar" class="left-sidebar"><div class="left-sidebar" ng-bind-html="leftSidebar()"></div></td>
+                     <td class="slide"><div class="slide" ng-transclude></div></td>
+                     <td ng-if="with_sidebar" class="right-sidebar"><div class="right-sidebar" ng-bind-html="rightSidebar()"></div></td>
+                   </tr>
+                   <tr ng-if="with_footer"><td class="footer" colspan="3"><div class="footer" ng-bind-html="footer()"></div></td></tr>
+                 </tbody>
+               </table>
+             </div>
+			`
+
+	};
 })
 
 //.directive('page', function() {
@@ -671,10 +729,12 @@ var app = angular.module('ngPres', [])
     return {
         restrict: 'E',
         require: '^presentation',
+		scope: {},
         link: function(scope, element, attr) {
+			console.log("progress bar granularity", attr.granularity, attr.granularity === 'step', attr.granularity == 'step');
             scope.use_step = attr.granularity === 'step';
         },
-        template: '<div class="progress-bar"><div class="progress-bar-inner" style="width: {{100 * ((use_step ? $parent.global_step : $parent.current_slide) + 1) / (use_step ? $parent.step_count : $parent.slide_count)}}%;"></div></div>'
+        template: '<div class="progress-bar"><div class="progress-bar-inner" style="width: {{100 * (use_step ? ($parent.global_step + 1) / $parent.step_count : ($parent.current_slide + 1) / $parent.slide_count)}}%;"></div></div>'
     };
 })
 
