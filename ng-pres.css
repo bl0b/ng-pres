@@ -4,8 +4,8 @@ html, body, div, span, a, p, table, td, tr, tbody, thead, th, h1, h2, h3, h4, h5
     border-collapse: collapse;
     border-spacing: 0px;
     background: none;
-	/*-webkit-margin-before: 0;*/
-	/*-webkit-margin-after: 0;*/
+    /*-webkit-margin-before: 0;*/
+    /*-webkit-margin-after: 0;*/
 }
 
 .hidden { display: none; visibility: hidden; }
@@ -17,8 +17,6 @@ html, body, div, span, a, p, table, td, tr, tbody, thead, th, h1, h2, h3, h4, h5
 .tiny { font-size: 8pt; }
 
 body {
-    /*width: 800;*/
-    /*height: 600;*/
     /*transform: scale(1vw/12*min(1, 1vh/9*4/3), 1vh/9*min(1, 1vw/12*3/4));*/
     /*transform: scale(1vw/8*min(1, 1vh/6*4/3), 1vh/6*min(1, 1vw/8*3/4));*/
     /*transform: scale(min(100vw, 133vh), min(75vw, 100vh));*/
@@ -27,6 +25,8 @@ body {
                       /*0,   0, 1);*/
     background: black;
     font-size: 16pt; /* normal */
+    -webkit-font-smoothing: antialiased !important;
+    font-smoothing: antialiased !important;
 }
 
 body.presentation-preview {
@@ -43,12 +43,12 @@ table {
 
 div.header h1 {
     text-align: center;
-	font-size: 1.5em;
+    font-size: 1.5em;
 }
 
 div.header h2 {
     text-align: center;
-	font-size: 1.25em;
+    font-size: 1.25em;
 }
 
 table.presentation table td.center {
@@ -57,19 +57,19 @@ table.presentation table td.center {
 }
 
 div.header {
-	position: relative;
+    position: relative;
 }
 
 div.footer {
-	position: relative;
+    position: relative;
 }
 
 div.left-sidebar {
-	position: relative;
+    position: relative;
 }
 
 div.right-sidebar {
-	position: relative;
+    position: relative;
 }
 
 html,body {
@@ -80,34 +80,34 @@ html,body {
 ul.toc {
     list-style-type: upper-roman;
     padding-left: 1.5em;
-	position: relative;
+    position: relative;
 }
 
 ul.toc ul.toc {
     list-style-type: lower-roman;
     padding-left: .5em;
-	position: relative;
+    position: relative;
 }
 
 ul.toc ul.toc ul.toc {
     list-style-type: lower-alpha;
     padding-left: .5em;
-	position: relative;
+    position: relative;
 }
 
 .inactive-toc-item {
     font-weight: normal;
-	font-style: normal;
+    font-style: normal;
 }
 
 .current-toc-item {
     font-weight: bold;
-	font-style: normal;
+    font-style: normal;
 }
 
 .current-toc-item-parent {
     font-weight: bold;
-	font-style: italic;
+    font-style: italic;
 }
 
 div.slide {
@@ -154,7 +154,19 @@ div.slide {
 }
 
 .slide-bullets {
-    display: block;
+    /*border: 1px solid red;*/
+    display: inline-block;
+    /*margin: 0;*/
+    /*margin-top: -1em;*/
+}
+
+.toc a {
+	text-decoration: none;
+	color: black;
+}
+
+.toc a:hover {
+	color: green;
 }
 
 /*.slide-bullet:after {*/
@@ -243,7 +255,9 @@ div.block {
     /*border-radius: 2em 1em 4em / 0.5em 3em;*/
     border: 1px solid lightgreen !important;
     overflow: hidden;
-    margin: 2em;
+    margin-bottom: 2em;
+    margin-left: 2em;
+    margin-right: 2em;
 }
 
 div.block div.block-title {
@@ -265,13 +279,42 @@ div.block div.block-content {
     padding-top: .5em;
 }
 
+div.block div.block {
+    /*border-radius: 2em 1em 4em / 0.5em 3em;*/
+    border: 1px solid lightgreen !important;
+    overflow: hidden;
+    margin-top: .5em;
+    margin-bottom: .5em;
+    margin-left: .5em;
+    margin-right: .5em;
+}
+
+div.block div.block div.block-title {
+    border-top: 1px solid lightgreen !important;
+    border-left: 1px solid lightgreen !important;
+    border-right: 1px solid lightgreen !important;
+    border-radius; 30px;
+    background-color: lightgreen;
+    padding: 1em;
+    padding-bottom: .5em;
+}
+
+div.block div.block div.block-content {
+    border-bottom: 1px solid lightgreen !important;
+    border-left: 1px solid lightgreen !important;
+    border-right: 1px solid lightgreen !important;
+    border-radius; 30px;
+    padding: 1em;
+    padding-top: .5em;
+}
+
 .talk-author { display: inline-block; }
 .talk-date { display: inline-block; }
 .talk-where { display: inline-block; }
 
 .full {
-	width: 100%;
-	height: 100%;
+    width: 100%;
+    height: 100%;
 }
 
 .hide_cursor {
