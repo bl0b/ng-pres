@@ -83,14 +83,15 @@ var TocEntry = function TocEntry(title) {
     this.title = title;
     this.slides = [];
     this.children = [];
-	this.own_slide = -1;
+    this.own_slide = -1;
+    this.state = 'inactive-toc-item';
 };
 
 TocEntry.prototype = {
     add_slide: function(s) { this.slides.push(s); },
     contains: function(s) {
-		return this.own_slide == s || this.slides.indexOf(s) != -1;
-	},
+        return this.own_slide == s || this.slides.indexOf(s) != -1;
+    },
     child_contains: function(s) {
         /*console.log("contains " + s + "?", this);*/
         /*if (this.slides.indexOf(s) != -1) {*/
@@ -103,7 +104,52 @@ TocEntry.prototype = {
         }
         return false;
     },
-    add_child: function(c) { this.children.push(c); }
+    add_child: function(c) { this.children.push(c); },
+    first_slide: function(c) {
+        if (this.slides.length == 0) {
+            if (this.children.length > 0) {
+                return this.children[0].first_slide();
+            }
+            return undefined;
+        } else if (this.children.length > 0) {
+            return Math.min(this.slides[0], this.children[0].first_slide());
+        } else {
+            return this.slides[0];
+        }
+    },
+    last_slide: function(c) {
+        if (this.slides.length == 0) {
+            if (this.children.length > 0) {
+                return this.children[this.children.length - 1].last_slide();
+            }
+            return undefined;
+        } else if (this.children.length > 0) {
+            return Math.max(this.slides[this.slides.length - 1], this.children[this.children.length - 1].first_slide());
+        } else {
+            return this.slides[this.slides.length - 1];
+        }
+    },
+    reset_state: function() {
+        this.state = 'inactive-toc-item';
+        for (var i = 0; i < this.children.length; ++i) {
+            this.children[i].reset_state();
+        }
+    },
+    update_state: function(cur_slide) {
+        if (this.contains(cur_slide)) {
+            this.state = 'active-toc-item';
+            return true;
+        } else if (this.first_slide() > cur_slide || this.last_slide() < cur_slide) {
+            return false;
+        } else {
+            for (var i = 0; i < this.children.length; ++i) {
+                if (this.children[i].update_state(cur_slide)) {
+                    this.state = 'active-toc-item-parent';
+                    return true;
+                }
+            }
+        }
+    }
 };
 
 
@@ -113,13 +159,17 @@ var app = angular.module('ngPres', [])
 .run(function($templateCache) {
     $templateCache
         .put("toc-item.html",
-             `{{item.title}}
+             `<a ng-if="clickable" href="##{{item.first_slide()}}:0">{{item.title}}</a><span ng-if="!clickable">{{item.title}}</span>
              <div class="slide-bullets">
                  <span ng-class="['slide-bullet', {'active-slide-bullet': s == $parent.current_slide}]"
-                       ng-repeat="s in item.slides">{{s == $parent.current_slide ? slideBulletActive : slideBullet}}</span>
+                       ng-repeat="s in item.slides">
+                            <a ng-if="clickable" href="##{{s}}:0">{{s == $parent.current_slide ? slideBulletActive : slideBullet}}</a>
+                            <span ng-if="!clickable">{{s == $parent.current_slide ? slideBulletActive : slideBullet}}</span>
+                 </span>
              </div>
              <ul class="toc" ng-if="item.children.length > 0">
-                 <li ng-class="{'current-toc-item': item.contains($parent.current_slide), 'current-toc-item-parent': item.child_contains($parent.current_slide), 'inactive-toc-item': !(item.contains($parent.current_slide) || item.child_contains($parent.current_slide))}"
+                 <!-- <li ng-class="{'current-toc-item': item.contains($parent.current_slide), 'current-toc-item-parent': item.child_contains($parent.current_slide), 'inactive-toc-item': !(item.contains($parent.current_slide) || item.child_contains($parent.current_slide))}" -->
+                 <li class="{{item.state}}"
                      ng-repeat="item in item.children">
                      <ng-include src="'toc-item.html'"></ng-include>
                  </li>
@@ -270,17 +320,36 @@ var app = angular.module('ngPres', [])
 
             $scope.showcasing = false;
 
-            $timeout(function() {
-                var hash = $location.hash(),
-                    parts = hash.split(':').map(Number);
-                if (parts.length == 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
-                    $scope.current_slide = parts[0];
-                    $scope.current_step = parts[1];
-                    $scope.global_step = $scope.current_step;
-                    for (var i = 0; i < $scope.current_slide; ++i) {
-                        $scope.global_step += 1 + $scope.steps_by_slide[i];
-                    }
+            $scope.go_to_slide = function(sl, st) {
+                console.log("go to slide", sl, st);
+                if (sl === undefined) {
+                    return;
                 }
+                $scope.current_slide = sl;
+                $scope.current_step = st;
+                $scope.global_step = $scope.current_step;
+                for (var i = 0; i < $scope.current_slide; ++i) {
+                    $scope.global_step += 1 + $scope.steps_by_slide[i];
+                }
+            };
+
+            this.go_to_slide = function(sl, st) { $scope.go_to_slide(sl, st); };
+
+            /*$timeout(function() {*/
+            $scope.$watch(
+                function() { return $location.hash(); },
+                function(value) {
+                    var hash = $location.hash(),
+                        parts = hash.split(':').map(Number);
+                    if (parts.length == 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+                        $scope.go_to_slide(parts[0], parts[1]);
+                    }
+                });
+
+            $scope.$watch(function () {
+                return location.hash;
+            }, function (value) {
+                console.log("location changed!", value);
             });
 
             $scope.next_slide = function() {
@@ -323,10 +392,11 @@ var app = angular.module('ngPres', [])
                     $scope.current_slide -= 1;
                     $scope.current_step = $scope.steps_by_slide[$scope.current_slide];
                     $scope.global_step -= 1;
+                    $scope.TOC.update_state($scope.current_slide);
+                    $scope.$slide = $scope.all_slide_scopes[$scope.current_slide];
                     $rootScope.$digest();  /* ensure adjustboxes are properly computed */
                 }
                 $location.hash($scope.current_slide + ':' + $scope.current_step);
-                $scope.$slide = $scope.all_slide_scopes[$scope.current_slide];
             };
 
             $scope.next_step = function() {
@@ -338,10 +408,11 @@ var app = angular.module('ngPres', [])
                     $scope.current_step = 0;
                     $scope.current_slide += 1;
                     $scope.global_step += 1;
+                    $scope.TOC.update_state($scope.current_slide);
+                    $scope.$slide = $scope.all_slide_scopes[$scope.current_slide];
                     $rootScope.$digest();  /* ensure adjustboxes are properly computed */
                 }
                 $location.hash($scope.current_slide + ':' + $scope.current_step);
-                $scope.$slide = $scope.all_slide_scopes[$scope.current_slide];
             };
 
             $scope.$on('keydown:37' /* left arrow */, function(onEvent, keypressEvent) {
@@ -406,13 +477,13 @@ var app = angular.module('ngPres', [])
                 return true;  // slide_index == $scope.current_slide;
             };
 
-			$scope.on_section = false;
-			$scope.on_section_slides = [];
-			$scope.is_on_section_slide = function() {
-				return $scope.on_section_slides.indexOf($scope.current_slide) != -1;
-			};
+            $scope.on_section = false;
+            $scope.on_section_slides = [];
+            $scope.is_on_section_slide = function() {
+                return $scope.on_section_slides.indexOf($scope.current_slide) != -1;
+            };
 
-			this.set_onSection = function() { $scope.on_section = true; };
+            this.set_onSection = function() { $scope.on_section = true; };
 
             this.match_step = function(steps) { return $scope.match_step(steps); };
 
@@ -429,7 +500,9 @@ var app = angular.module('ngPres', [])
                 var section = new TocEntry(title);  // {title: title, slides: [], children: []};
                 this.current_section().children.push(section);
                 this.section_stack.push(section);
-				$scope.on_section_slides.push(section.own_slide = this.add_slide($scope, false));
+                if ($scope.on_section) {
+                    $scope.on_section_slides.push(section.own_slide = this.add_slide($scope, false));
+                }
             };
 
             this.leave_section = function() {
@@ -440,9 +513,9 @@ var app = angular.module('ngPres', [])
             this.add_slide = function(slide_scope, not_section_page) {
                 var ret = $scope.slide_count;
                 $scope.slide_count += 1;
-				if (not_section_page) {
-			        this.current_section().slides.push(ret);
-				}
+                if (not_section_page) {
+                    this.current_section().slides.push(ret);
+                }
                 /*$scope.all_steps.push([ret, 0]);*/
                 $scope.steps_by_slide[ret] = 0;
                 $scope.all_slide_scopes[ret] = slide_scope;
@@ -487,11 +560,18 @@ var app = angular.module('ngPres', [])
         scope: true,
         link: function(scope, element, attr, presentation) {
             scope.currentClass = attr.currentClass;
+            scope.clickable = attr.clickable !== undefined;
+            scope.go_to_slide = function(sl) {
+                console.log("got click!", sl);
+                if (scope.clickable) {
+                    presentation.go_to_slide(sl, 0);
+                }
+            }
         },
         template:
             `<div class="toc" ng-repeat="item in [$parent.TOC]">
                  <ul class="toc" ng-if="item.children.length > 0">
-					 <li ng-class="{'current-toc-item': item.contains($parent.current_slide), 'current-toc-item-parent': item.child_contains($parent.current_slide), 'inactive-toc-item': !(item.contains($parent.current_slide) || item.child_contains($parent.current_slide))}"
+                 <li class="{{item.state}}"
                          ng-repeat="item in item.children">
                          <ng-include src="'toc-item.html'"></ng-include>
                      </li>
@@ -570,9 +650,9 @@ var app = angular.module('ngPres', [])
         /*controller: function() {},*/
         /*template: '<div ng-class="[\'slide\', {\'hidden\': slide_index != current_slide()}]" ng-transclude></div>'*/
         /*templateUrl: 'frame.html'*/
+             /*<div ng-if="match_slide(slide_index)">-->*/
         template: `
              <div ng-class="{'hidden': !match_slide(slide_index)}">
-             <!--<div ng-if="match_slide(slide_index)">-->
                <table class="presentation">
                  <tbody>
                    <tr ng-if="with_header"><td class="header" colspan="3"><div class="header" ng-bind-html="header()"></div></td></tr>
@@ -590,26 +670,26 @@ var app = angular.module('ngPres', [])
 })
 
 .directive('onSection', function() {
-	return {
-		restrict: 'E',
+    return {
+        restrict: 'E',
         transclude: true,
-		require: '^presentation',
-		scope: true,
-		priority: 1000,
+        require: '^presentation',
+        scope: true,
+        priority: 1000,
         link: {
             pre: function(scope, element, attr, presentation) {
-				/*element.addClass('hidden');*/
-				scope.with_header = attr.noHeader === undefined;
-				scope.with_sidebar = attr.noSidebar === undefined;
-				scope.with_footer = attr.noFooter === undefined;
-				scope.disable_slide_counter = attr.noSlideCounter !== undefined;
-				presentation.set_onSection();
-			},
-			post: function(scope, element, attr, presentation) {
+                /*element.addClass('hidden');*/
+                scope.with_header = attr.noHeader === undefined;
+                scope.with_sidebar = attr.noSidebar === undefined;
+                scope.with_footer = attr.noFooter === undefined;
+                scope.disable_slide_counter = attr.noSlideCounter !== undefined;
+                presentation.set_onSection();
+            },
+            post: function(scope, element, attr, presentation) {
                 /*console.log("LINKED SLIDE #" + scope.slide_index + " counting " + (1 + scope.steps_by_slide[scope.slide_index]) + " steps");*/
             }
-		},
-		template: `
+        },
+        template: `
              <div ng-if="is_on_section_slide()">
                <table class="presentation">
                  <tbody>
@@ -623,9 +703,9 @@ var app = angular.module('ngPres', [])
                  </tbody>
                </table>
              </div>
-			`
+            `
 
-	};
+    };
 })
 
 //.directive('page', function() {
@@ -729,9 +809,9 @@ var app = angular.module('ngPres', [])
     return {
         restrict: 'E',
         require: '^presentation',
-		scope: {},
+        scope: {},
         link: function(scope, element, attr) {
-			console.log("progress bar granularity", attr.granularity, attr.granularity === 'step', attr.granularity == 'step');
+            console.log("progress bar granularity", attr.granularity, attr.granularity === 'step', attr.granularity == 'step');
             scope.use_step = attr.granularity === 'step';
         },
         template: '<div class="progress-bar"><div class="progress-bar-inner" style="width: {{100 * (use_step ? ($parent.global_step + 1) / $parent.step_count : ($parent.current_slide + 1) / $parent.slide_count)}}%;"></div></div>'
@@ -784,8 +864,8 @@ var app = angular.module('ngPres', [])
 .directive('talkWhere', function() { return { restrict: 'E', require: '^presentation', scope: false, template: '<span class="talk-where">{{$parent.talk_where}}</span>' }; })
 .directive('talkDate', function() { return { restrict: 'E', require: '^presentation', scope: false, template: '<span class="talk-date">{{$parent.talk_date}}</span>' }; })
 
-.directive('title', function() { return { restrict: 'E', require: '^presentation', scope: false, template: '<h1>{{title}}</h1>' }; })
-.directive('subtitle', function() { return { restrict: 'E', require: '^presentation', scope: false, template: '<h2>{{subtitle}}</h2>' }; })
+.directive('talkTitle', function() { return { restrict: 'E', require: '^presentation', scope: false, template: '<h1>{{title}}</h1>' }; })
+.directive('talkSubtitle', function() { return { restrict: 'E', require: '^presentation', scope: false, template: '<h2>{{subtitle}}</h2>' }; })
 
 
 .directive('defaultFooter', function() {
