@@ -27,14 +27,15 @@ app.directive("helloSrc", [function() {
 
 body {
     font-family: "sans-serif", "Verdana Sans", "Helvetica Sans";
+	font-size: 32px;
 }
 .bgred { background-color: red; }
 .bold { font-weight: bold; border: 1px solid red; }
-.header { height: 80px; }
-.left-sidebar { width: 160px; }
+.header { height: 160px; }
+.left-sidebar { width: 340px; }
 .slide { width: 100%; }
 /*.right-sidebar { width: 1px; border: 0; }*/
-.footer { height: 5px; border: 0; }
+.footer { height: 10px; border: 0; }
 td:empty { height: 0px; width: 0px; background: #000000; }
 div.block {
     border-radius: 2em / 2em;
@@ -76,18 +77,26 @@ ul.updown { list-style: none; padding: 0; }
 ul.updown li {}
 ul.updown li.up { color: green; }
 ul.updown li.down { color: red; }
-ul.updown li.up:before { content: "+"; padding-right: 8px; color: green; }
-ul.updown li.down:before { content: "-"; padding-right: 8px; color: red; }
+ul.updown li.up:before { content: "+"; padding-right: 16px; color: green; }
+ul.updown li.down:before { content: "-"; padding-right: 16px; color: red; }
 
 table.presentation {
-    min-height: 768px;
-    min-width: 1024px;
-    height: 768px;
-    width: 1024px;
+    min-height: 1536px;
+    min-width: 2048px;
+    height: 1536px;
+    width: 2048px;
     /*border: dashed .5px black;*/
+	font-size: 32px;
     border-collapse: collapse;
     background: white;
 }
+
+.huge { font-size: 64px; }
+.big { font-size: 48px; }
+.normal { font-size: 32px; }
+.small { font-size: 24px; }
+.tiny { font-size: 16px; }
+
 td {
     /*border: dashed 1px black;*/
     border-collapse: collapse;
@@ -129,13 +138,13 @@ div.toc-page .inactive-toc-item {
     color: rgba(0,0,0,.5);
 }
 
-ul.toc { font-size: .9em; }
+/*ul.toc { font-size: .9em; }*/
 
 table.struc {
     border: 1px dashed black;
     border-collapse: collapse;
-    width: 400px;
-    height: 300px;
+    width: 800px;
+    height: 600px;
 }
 table.struc td {
     text-align: center;
@@ -146,14 +155,15 @@ table.struc td {
 table.struc td.vert {
     transform-origin: 50% 50%;
     transform: rotate(-90deg);
-    width: 50px;
+    width: 100px;
 }
 
-table.struc td.horiz { height: 50px; }
+table.struc td.horiz { height: 100px; }
 
 slide p { padding-bottom: .5em; }
 
 table.attributes {
+	width: 100%;
     border: 1px solid lightgreen;
     /*font-size: .75em;*/
     border-collapse: collapse;
@@ -222,12 +232,12 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
                 <centered>
                 <!--<h1>ng-pres: write your presentation slides with HTML</h1>-->
                 <!--<h2>powered by AngularJS</h2>-->
-                    <talk-title/>
-                    <talk-subtitle/>
+					<talk-title></talk-title>
+					<talk-subtitle></talk-subtitle>
                     <p>&nbsp;</p>
                     <p>A presentation by {{talk_author}}</p>
                     <p>&nbsp;</p>
-                    <small><p>Use the left and right arrow keys to navigate this presentation</p></small>
+                    <p class="small">Use the left and right arrow keys to navigate this presentation</p>
                 </centered>
             </slide>
             <section title="Why ng-pres?">
@@ -304,7 +314,7 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
                         </block>
                     </slide>
                 </section>
-                <section title="Document structure">
+                <section title="Structure">
                     <slide>
                         <block title="Recap">
                             <p>As you have seen in the <em>Hello World!</em> example, the required HTML around the actual content is quite small&mdash;for HTML. Once both the Angular and ngPres scripts have been loaded, everything happens inside the <code>&lt;presentation&gt;</code> tag.</p>
@@ -339,7 +349,10 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
                         </block>
                     </slide>
                 </section>
-                <section title="Document style">
+                <section title="Styling">
+					<slide>
+						TODO
+					</slide>
                 </section>
             </section>
             <section title="Reference">
@@ -351,8 +364,8 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
 							<pre class="syntax">&lt;presentation <em>attributes...</em>&gt;
 <em>contents...</em>
 &lt;/presentation&gt;</pre>
+							<div class="ref"><p>Attributes</p></div>
 							<table class="attributes">
-								<caption>Attributes</caption>
 								<thead>
 									<th>Name</th>
 									<th>Value</th>
@@ -479,7 +492,7 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
                             <div style="text-align: center; width: 100%; border: 1px dashed black; font-size: .75em;">
                                 <div style="display: inline-block; float: left; padding-left: 1em; padding-right: 1em; border-right: 1px dashed black;"><code>&lt;talk-date/&gt;</code></div>
                                 <div style="display: inline-block; float: left; padding-left: 1em; padding-right: 1em; border-right: 1px dashed black;"><code>&lt;talk-where/&gt;</code></div>
-                                <div style="display: inline-block; float: right; width: 120px; padding-left: 1em; padding-right: 1em; border-left: 1px dashed black;"><code>&lt;slide-counter/&gt;&amp;nbsp;</code></div>
+                                <div style="display: inline-block; float: right; width: 300px; padding-left: 1em; padding-right: 1em; border-left: 1px dashed black;"><code>&lt;slide-counter/&gt;&amp;nbsp;</code></div>
                                 <code>&lt;talk-author/&gt;</code>
                             </div>
                             <div class="ref"><p>Syntax</p></div>
@@ -502,8 +515,8 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
                                 <pre class="syntax">&lt;section <em>title="..."</em>&gt;
     <em>contents...</em>
 &lt;/section&gt;</pre>
+							<div class="ref"><p>Attributes</p></div>
                                 <table class="attributes">
-                                    <caption>Attributes</caption>
                                     <thead>
                                         <th>Name</th>
                                         <th>Value</th>
@@ -532,8 +545,8 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
                                 <pre class="syntax">&lt;slide <em>attributes...</em>&gt;
     <em>contents...</em>
 &lt;/slide&gt;</pre>
+							<div class="ref"><p>Attributes</p></div>
                                 <table class="attributes">
-                                    <caption>Attributes</caption>
                                     <thead>
                                         <th>Name</th>
                                         <th>Value</th>
@@ -582,8 +595,8 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
                                 <pre class="syntax">&lt;block <em>title="..."</em>&gt;
     <em>contents...</em>
 &lt;/block&gt;</pre>
+							<div class="ref"><p>Attributes</p></div>
                                 <table class="attributes">
-                                    <caption>Attributes</caption>
                                     <thead>
                                         <th>Name</th>
                                         <th>Value</th>
@@ -610,8 +623,8 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
                             <p>Render the Table of Contents.</p>
                             <div class="ref"><p>Syntax</p></div>
                                 <pre class="syntax">&lt;render-toc <em>attributes...</em>&gt;&lt;/render-toc&gt;</pre>
+							<div class="ref"><p>Attributes</p></div>
                                 <table class="attributes">
-                                    <caption>Attributes</caption>
                                     <thead>
                                         <th>Name</th>
                                         <th>Value</th>
@@ -647,8 +660,8 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
 							<pre class="syntax">&lt;on-section <em>attributes...</em>&gt;
     <em>contents...</em>
 &lt;/on-section&gt;</pre>
+							<div class="ref"><p>Attributes</p></div>
                                 <table class="attributes">
-                                    <caption>Attributes</caption>
                                     <thead>
                                         <th>Name</th>
                                         <th>Value</th>
@@ -716,8 +729,8 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
                             <p>Render a progress bar.</p>
                             <div class="ref"><p>Syntax</p></div>
                                 <pre class="syntax">&lt;progress-bar <em>attributes...</em>&gt;&lt;/progress-bar&gt;</pre>
+							<div class="ref"><p>Attributes</p></div>
                                 <table class="attributes">
-                                    <caption>Attributes</caption>
                                     <thead>
                                         <th>Name</th>
                                         <th>Value</th>
@@ -725,9 +738,9 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td class="attrname">clickable</td>
-                                            <td class="attrtype">none</td>
-                                            <td class="attreffect">Creates links on the section titles to the first slide inside each section, as well as links on each slide bullet.</td>
+                                            <td class="attrname">granularity</td>
+                                            <td class="attrtype">"step" or "slide"</td>
+                                            <td class="attreffect">Displays the progress either in term of total steps passed or in terms of slides passed.</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -740,28 +753,143 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
                     </slide>
                 </section>
                 <section title="slide-counter">
-                    <slide></slide>
+                    <slide>
+                        <block title="<progress-bar>">
+                            <p>Render a slide counter.</p>
+                            <div class="ref"><p>Syntax</p></div>
+                                <pre class="syntax">&lt;slide-counter <em>attributes...</em>&gt;&lt;/slide-counter&gt;</pre>
+							<div class="ref"><p>Attributes</p></div>
+                                <table class="attributes">
+                                    <thead>
+                                        <th>Name</th>
+                                        <th>Value</th>
+                                        <th>Effect</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="attrname">granularity</td>
+                                            <td class="attrtype">"step" or "slide"</td>
+                                            <td class="attreffect">Displays the progress either in term of total steps passed or in terms of slides passed.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            <div class="ref"><p>CSS Classes</p></div>
+							<ul>
+								<li>.slide-counter</li>
+							</ul>
+                        </block>
+					</slide>
                 </section>
                 <section title="talk-author">
-                    <slide></slide>
+                    <slide>
+                        <block title="<talk-author>">
+							<p>Render the <code>talk-author</code> metadata.</p>
+                            <div class="ref"><p>Syntax</p></div>
+							<pre class="syntax">&lt;talk-author&gt;&lt;/talk-author&gt;</pre>
+                            <div class="ref"><p>CSS Classes</p></div>
+							<ul>
+								<li>.talk-author</li>
+							</ul>
+                        </block>
+					</slide>
                 </section>
                 <section title="talk-where">
-                    <slide></slide>
+                    <slide>
+                        <block title="<talk-where>">
+							<p>Render the <code>talk-where</code> metadata.</p>
+                            <div class="ref"><p>Syntax</p></div>
+							<pre class="syntax">&lt;talk-where&gt;&lt;/talk-where&gt;</pre>
+                            <div class="ref"><p>CSS Classes</p></div>
+							<ul>
+								<li>.talk-where</li>
+							</ul>
+                        </block>
+					</slide>
                 </section>
                 <section title="talk-date">
-                    <slide></slide>
+                    <slide>
+                        <block title="<talk-date>">
+							<p>Render the <code>talk-date</code> metadata.</p>
+                            <div class="ref"><p>Syntax</p></div>
+							<pre class="syntax">&lt;talk-date&gt;&lt;/talk-date&gt;</pre>
+                            <div class="ref"><p>CSS Classes</p></div>
+							<ul>
+								<li>.talk-date</li>
+							</ul>
+                        </block>
+					</slide>
                 </section>
                 <section title="talk-title">
-                    <slide></slide>
+                    <slide>
+                        <block title="<talk-title>">
+							<p>Render the <code>talk-title</code> metadata.</p>
+                            <div class="ref"><p>Syntax</p></div>
+							<pre class="syntax">&lt;talk-title&gt;&lt;/talk-title&gt;</pre>
+                            <div class="ref"><p>CSS Classes</p></div>
+							<ul>
+								<li>none</li>
+							</ul>
+                        </block>
+					</slide>
                 </section>
                 <section title="talk-subtitle">
-                    <slide></slide>
+                    <slide>
+                        <block title="<talk-subtitle>">
+							<p>Render the <code>talk-subtitle</code> metadata.</p>
+                            <div class="ref"><p>Syntax</p></div>
+							<pre class="syntax">&lt;talk-subtitle&gt;&lt;/talk-subtitle&gt;</pre>
+                            <div class="ref"><p>CSS Classes</p></div>
+							<ul>
+								<li>none</li>
+							</ul>
+                        </block>
+					</slide>
                 </section>
                 <section title="centered">
-                    <slide></slide>
+                    <slide>
+                        <block title="<centered>">
+                            <p>Center the contents both horizontally and vertically.</p>
+                            <div class="ref"><p>Syntax</p></div>
+                                <pre class="syntax">&lt;centered&gt;
+    <em>contents...</em>
+&lt;/centered&gt;</pre>
+                            <div class="ref"><p>CSS Classes</p></div>
+							<ul>
+								<li>table.full</li>
+								<li>td.center</li>
+							</ul>
+                        </block>
+                    </slide>
                 </section>
                 <section title="adjustbox">
-                    <slide></slide>
+                    <slide>
+                        <block title="<adjustbox>">
+							<p>Scale the contents to match the size of the adjustbox. Can maintain aspect ratio if desired. The adjustbox <strong>must</strong> be styled (either by CSS class or by using the <code>style</code> attribute) to the desired size, otherwise its size is 0. By default, stretch the contents to fill the adjustbox.</p>
+                            <div class="ref"><p>Syntax</p></div>
+                                <pre class="syntax">&lt;adjustbox <em>attributes</em>&gt;
+    <em>contents...</em>
+&lt;/adjustbox&gt;</pre>
+							<div class="ref"><p>Attributes</p></div>
+                                <table class="attributes">
+                                    <thead>
+                                        <th>Name</th>
+                                        <th>Value</th>
+                                        <th>Effect</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="attrname">maintain-aspect</td>
+                                            <td class="attrtype">none</td>
+                                            <td class="attreffect">Makes it so the aspect ratio will be maintained. The contents will be centered in one direction and maxed in the other direction.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            <div class="ref"><p>CSS Classes</p></div>
+							<ul>
+								<li>none</li>
+							</ul>
+                        </block>
+                    </slide>
                 </section>
             </section>
             <slide-header>

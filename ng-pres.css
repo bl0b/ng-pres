@@ -1,8 +1,8 @@
 html, body, div, span, a, p, table, td, tr, tbody, thead, th, h1, h2, h3, h4, h5, h6 {
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
     border-collapse: collapse;
-    border-spacing: 0px;
+    border-spacing: 0;
     background: none;
     /*-webkit-margin-before: 0;*/
     /*-webkit-margin-after: 0;*/
@@ -10,11 +10,11 @@ html, body, div, span, a, p, table, td, tr, tbody, thead, th, h1, h2, h3, h4, h5
 
 .hidden { display: none; visibility: hidden; }
 
-.huge { font-size: 24pt; }
-.big { font-size: 20pt; }
-.normal { font-size: 16pt; }
-.small { font-size: 12pt; }
-.tiny { font-size: 8pt; }
+.huge { font-size: 1.5em; }
+.big { font-size: 1.25em; }
+.normal { font-size: 1em; }
+.small { font-size: .75em; }
+.tiny { font-size: .5em; }
 
 body {
     /*transform: scale(1vw/12*min(1, 1vh/9*4/3), 1vh/9*min(1, 1vw/12*3/4));*/
@@ -24,7 +24,7 @@ body {
                       /*0,   .5, 0,*/
                       /*0,   0, 1);*/
     background: black;
-    font-size: 16pt; /* normal */
+    font-size: 16px; /* normal */
     -webkit-font-smoothing: antialiased !important;
     font-smoothing: antialiased !important;
 }
@@ -181,7 +181,7 @@ div.slide {
 
 .progress-bar {
     width: 100%;
-    height: 10px;
+    height: .75em;
     background: blue;
     background: linear-gradient(to bottom, rgba(255,255,255,0) 40%, blue 50%, rgba(255,255,255,0) 60%);
 }
@@ -264,7 +264,7 @@ div.block div.block-title {
     border-top: 1px solid lightgreen !important;
     border-left: 1px solid lightgreen !important;
     border-right: 1px solid lightgreen !important;
-    border-radius; 50px;
+    border-radius; 3em;
     background-color: lightgreen;
     padding: 1em;
     padding-bottom: .5em;
@@ -274,7 +274,7 @@ div.block div.block-content {
     border-bottom: 1px solid lightgreen !important;
     border-left: 1px solid lightgreen !important;
     border-right: 1px solid lightgreen !important;
-    border-radius; 50px;
+    border-radius; 3em;
     padding: 1em;
     padding-top: .5em;
 }
@@ -293,7 +293,7 @@ div.block div.block div.block-title {
     border-top: 1px solid lightgreen !important;
     border-left: 1px solid lightgreen !important;
     border-right: 1px solid lightgreen !important;
-    border-radius; 30px;
+    border-radius; 2em;
     background-color: lightgreen;
     padding: 1em;
     padding-bottom: .5em;
@@ -303,7 +303,7 @@ div.block div.block div.block-content {
     border-bottom: 1px solid lightgreen !important;
     border-left: 1px solid lightgreen !important;
     border-right: 1px solid lightgreen !important;
-    border-radius; 30px;
+    border-radius; 2em;
     padding: 1em;
     padding-top: .5em;
 }
