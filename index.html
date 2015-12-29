@@ -353,8 +353,37 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
                 </section>
                 <section title="Styling">
 					<slide>
-						TODO
+                        <block title="A note about screen size">
+                            <p>You probably noticed this presentation stretches across the whole screen. Unlike most modern web things, the goal here is not exactly responsive design. You don't want the layout to adapt to various screen sizes, you want it to look <em>exactly</em> the same on any resolution, save for the size of the pixels.</p>
+                            <p>This is achieved in <em>ng-pres</em> by automagically controlling the zoom factor of a fixed-size (yet vectorial) rendering, pretty much what happens when rendering a presentation from a PDF or *Office file.</p>
+                            <p>So, the first thing to do is to set up the virtual frame size. By default, <em>ng-pres</em> assumes a 4:3 resolution of 1024x768, which is most common with video projectors. It seems that web browsers are much better at zooming out than at zooming in, so you may want to set up a size much bigger than the target screens.</p>
+                            <div class="ref">CSS</div>
+                            <pre class="syntax">table.presentation { width: 1024px; height: 768px; font-size: 16px; }</pre>
+                        </block>
+                        <block title="Standard font sizes">
+                            <p>Five typical sizes are defined by default, ranging from huge to tiny. Redefine them at your leisure.</p>
+                            <div class="ref">CSS</div>
+                            <pre class="syntax">.huge { font-size: 1.5em; }
+.big { font-size: 1.25em; }
+.normal { font-size: 1em; }
+.small { font-size: .75em; }
+.tiny { font-size: .5em; }</pre>
+                        </block>
 					</slide>
+                    <slide>
+                        <block title="Styling the layout elements">
+                            <p>If you are using the <code>header</code>, <code>footer</code>, or <code>sidebar</code>s, you also want to style them at least to fix their sizes.</p>
+                            <div class="ref">CSS</div>
+                            <pre class="syntax">.footer { height: ***px; }
+.header { height: ***px; }
+.left-sidebar { width: ***px; }
+.right-sidebar { width: ***px; }
+.slide {}</pre>
+                        </block>
+                        <block title="Styling from here on">
+                            <p>The various CSS classes used in <em>ng-pres</em> are listed in the reference in next section. This part just covered the basics to get started with a fresh new presentation layout.</p>
+                        </block>
+                    </slide>
                 </section>
             </section>
             <section title="Reference">
@@ -792,6 +821,8 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
 							<ul>
 								<li>.talk-author</li>
 							</ul>
+							<div class="ref"><p>Equivalent HTML</p></div>
+                            <pre class="syntax">&lt;span class="talk-author"&gt;<em>author metadata</em>&lt;/span&gt;</pre>
                         </block>
 					</slide>
                 </section>
@@ -805,6 +836,8 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
 							<ul>
 								<li>.talk-where</li>
 							</ul>
+							<div class="ref"><p>Equivalent HTML</p></div>
+                            <pre class="syntax">&lt;span class="talk-where"&gt;<em>where metadata</em>&lt;/span&gt;</pre>
                         </block>
 					</slide>
                 </section>
@@ -818,6 +851,8 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
 							<ul>
 								<li>.talk-date</li>
 							</ul>
+							<div class="ref"><p>Equivalent HTML</p></div>
+                            <pre class="syntax">&lt;span class="talk-date"&gt;<em>date metadata</em>&lt;/span&gt;</pre>
                         </block>
 					</slide>
                 </section>
@@ -831,6 +866,8 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
 							<ul>
 								<li>none</li>
 							</ul>
+							<div class="ref"><p>Equivalent HTML</p></div>
+                            <pre class="syntax">&lt;h1&gt;<em>title metadata</em>&lt;/h1&gt;</pre>
                         </block>
 					</slide>
                 </section>
@@ -844,6 +881,8 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
 							<ul>
 								<li>none</li>
 							</ul>
+							<div class="ref"><p>Equivalent HTML</p></div>
+                            <pre class="syntax">&lt;h2&gt;<em>subtitle metadata</em>&lt;/h2&gt;</pre>
                         </block>
 					</slide>
                 </section>
@@ -860,6 +899,8 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
 								<li>table.full</li>
 								<li>td.center</li>
 							</ul>
+							<div class="ref"><p>Equivalent HTML</p></div>
+                            <pre class="syntax">&lt;table class="full"&gt;&lt;tr&gt;&lt;td class="center"&gt;<em>contents...</em>&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</pre>
                         </block>
                     </slide>
                 </section>
@@ -890,6 +931,12 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
 							<ul>
 								<li>none</li>
 							</ul>
+							<div class="ref"><p>Equivalent HTML</p></div>
+                            <pre class="syntax">&lt;div <em>with user styling</em>&gt;
+    &lt;div <em>magical resizing style</em>&gt;
+        &lt;div <em>to properly box the contents</em>&gt;<em>contents...</em>&lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</pre>
                         </block>
                     </slide>
                 </section>
