@@ -940,7 +940,7 @@ var app = angular.module('ngPres', [])
         },
         template: `
             <div class="{{class}}" style="align: center; overflow: hidden; position: relative; padding: {{debug_adjustbox ? '-1px' : '0'}}; border: {{debug_adjustbox ? '1px solid rgba(255,0,0,.5)' : '0'}}; {{style}}"><!-- positioning container -->
-                <div style="transform-origin: 0 0; transform: translate({{translate_x}}px, {{translate_y}}px) scale({{scale_x}}, {{scale_y}}) !important; position: absolute; width: 100vw; height: 100vh; overflow: hidden;"><!-- resizing container -->
+                <div style="transform-origin: 0 0; transform: translate({{translate_x}}px, {{translate_y}}px) scale({{scale_x}}, {{scale_y}}) !important; position: absolute; width: 100vw; height: 100vh;"><!-- resizing container -->
                     <div style="display: inline-block;" ng-transclude></div>
                 </div>
                 <pre ng-if="debug_adjustbox" style="position: absolute; top: 0; left: 0; border: 0; background: rgba(128, 128, 128, .7); padding: 0 2px; margin: 0;">scale({{scale_x.toFixed(2)}}, {{scale_y.toFixed(2)}}) +{{translate_x.toFixed(2)}},{{translate_y.toFixed(2)}}</pre>
