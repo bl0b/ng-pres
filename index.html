@@ -3,13 +3,15 @@
         <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
         <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.2/angular.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.2/angular-touch.js"></script>
         <link rel="stylesheet" type="text/css" href="ng-pres.css"/>
         <link rel="stylesheet" href="hl/highlight.css">
         <!--<script src="//cdn.jsdelivr.net/highlight.js/9.0.0/highlight.min.js"></script>
-		<script type="text/javascript" src="3rd-party/angular-highlightjs.js"></script>-->
+        <script type="text/javascript" src="3rd-party/angular-highlightjs.js"></script>-->
         <script type="text/javascript" src="ng-pres.js"></script>
         <script type="text/javascript">
 var app = angular.module('ngPres');
+
 app.directive("helloSrc", [function() {
     return {
         templateUrl: 'hl/helloworld.html.html',
@@ -17,6 +19,24 @@ app.directive("helloSrc", [function() {
             var hl = attrs.lineHilite || "";
             scope.lineHilite = hl.split(',').map(Number);
         }
+    };
+}]);
+
+app.directive('mytheme', [function() {
+    return {
+        template: `
+        <slide-header>
+            <talk-title></talk-title>
+            <talk-subtitle></talk-subtitle>
+            <progress-bar granularity="step"/>
+        </slide-header>
+        <slide-left-sidebar>
+            <render-toc clickable/>
+        </slide-left-sidebar>
+        <slide-footer>
+            <default-footer/>
+        </slide-footer>
+        `,
     };
 }]);
         </script>
@@ -27,7 +47,7 @@ app.directive("helloSrc", [function() {
 
 body {
     font-family: "sans-serif", "Verdana Sans", "Helvetica Sans";
-	font-size: 32px;
+    font-size: 32px;
 }
 .bgred { background-color: red; }
 .bold { font-weight: bold; border: 1px solid red; }
@@ -59,9 +79,6 @@ div.block {
 /*}*/
 
 div.showcase {
-    /*width: 600px;*/
-    /*height: 450px;*/
-    /*margin: 20px;*/
     width: 240pt;
     height: 180pt;
     margin-left: 12pt;
@@ -73,12 +90,12 @@ div.showcase {
     background: none;
 }
 
-ul.updown { list-style: none; padding: 0; }
+ul.updown { list-style: none; padding-left: 16px; margin-left: 0; }
 ul.updown li {}
 ul.updown li.up { color: green; }
 ul.updown li.down { color: red; }
-ul.updown li.up:before { content: "+"; padding-right: 16px; color: green; }
-ul.updown li.down:before { content: "-"; padding-right: 16px; color: red; }
+ul.updown li.up:before { content: "+ "; /*padding-right: 16px;*/ color: green; margin-left: -16px; }
+ul.updown li.down:before { content: "- "; /*padding-right: 16px;*/ color: red; margin-left: -12px; }
 
 table.presentation {
     min-height: 1536px;
@@ -86,7 +103,7 @@ table.presentation {
     height: 1536px;
     width: 2048px;
     /*border: dashed .5px black;*/
-	font-size: 32px;
+    font-size: 32px;
     border-collapse: collapse;
     background: white;
 }
@@ -163,11 +180,11 @@ table.struc td.horiz { height: 100px; }
 slide p { padding-bottom: .5em; }
 
 table.attributes {
-	width: 100%;
+    width: 100%;
     border: 1px solid lightgreen;
     /*font-size: .75em;*/
     border-collapse: collapse;
-	font-size: 24px;
+    font-size: 24px;
 }
 table.attributes td { padding: .2em .5em; }
 table.attributes tr:nth-child(odd) { background: #d3f8d3; }
@@ -189,14 +206,36 @@ td.attrtype {
 pre.syntax {
     background: #e6e6e6;
     padding-left: 1em;
+    font-size: .8em;
+}
+
+code.syntax {
+    background: #e6e6e6;
+    padding-left: .2em;
+    padding-right: .2em;
+    font-size: .75em;
 }
 
 pre.syntax em {
     color: blue;
 }
 
-div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-weight: bold; margin-bottom: 1em; margin-top: 1em; }
+div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; padding-bottom: 0; font-weight: bold; margin-bottom: 1em; margin-top: 1em; }
 
+.slide-counter {
+    /*border: 1px solid green;*/
+}
+
+ul.classes {
+    font-family: monospace;
+    font-size: .75em;
+    list-style-type: none;
+}
+
+ul.classes li {
+    display: inline-block;
+    margin-right: 3em;
+}
         </style>
     </head>
 
@@ -233,35 +272,36 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
                 <centered>
                 <!--<h1>ng-pres: write your presentation slides with HTML</h1>-->
                 <!--<h2>powered by AngularJS</h2>-->
-				<span class="big"><talk-title></talk-title>
-					<talk-subtitle></talk-subtitle>
+                <span class="big"><talk-title></talk-title>
+                    <talk-subtitle></talk-subtitle>
                     <p>&nbsp;</p>
                     <p>A presentation by {{talk_author}}</p>
-					<p class="normal">(well, it's really a demo as well as the doc)</p>
+                    <p class="normal">(well, it's really a demo as well as the doc)</p>
                     <p>&nbsp;</p>
-					<p class="normal">Use the left and right arrow keys to navigate this presentation</p></span>
+                    <p class="normal">Use the left and right arrow keys to navigate this presentation</p></span>
                 </centered>
             </slide>
             <section title="Why ng-pres?">
                 <slide>
-                    <block title="Let's take a look at the existing options">
+                    <block title="Let's take a look at the existing options for writing presentation slides">
                     <!--<adjustbox virtual-aspect="1.33333" virtual-width="800" width="300" height="200" style="width: 300px; height: 200px;">-->
                     <ul>
                         <li visible="1-">Office suites
                             <ul class="updown">
-                                <li class="up">WYSIWIG</li>
-                                <li class="up">can embed multimedia content more or less easily</li>
+                                <li class="up">WYSIWIG <span class="small" style="color: black">(unsure whether this is a + or a -)</li>
+                                <li class="up">Can embed multimedia content more or less easily</li>
+                                <li class="down">Unless you export to PDF</li>
                                 <li class="down">Bugs</li>
                                 <li class="down">Lack of global consistency in styling (ever seen these sizes or positions change from slide to slide?)</li>
                             </ul>
                         </li>
                         <li visible="2-">beamer
                             <ul class="updown">
-                                <li class="up">Good global consistency in styling</li>
                                 <li class="up">Great with math formulae</li>
-                                <li class="down">lots of <strike>known bugs</strike>features</li>
-                                <li class="down">Tedious</li>
-                                <li class="down">Also suffers from slight positioning changes from slide to slide.</li>
+                                <li class="up">Good global consistency in styling</li>
+                                <li class="down">But it also suffers from slight positioning changes from slide to slide.</li>
+                                <li class="down">Lots of <strike>known bugs</strike>features</li>
+                                <li class="down">Long compilation times</li>
                                 <li class="down">Very multimedia unfriendly</li>
                             </ul>
                         </li>
@@ -279,8 +319,24 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
                             <li class="up">HTML ensures proper styling and simple structuration of contents</li>
                             <li class="up">Lots of JS libraries to embed dynamic contents, plots, even Te&chi;-style equations</li>
                             <li class="up">Ideal if your presentation is about something web-related</li>
-                            <li class="down">But... it's static! You don't want to write JS code, you want to write a presentation!</li>
-                            <li class="down">and varies slightly from browser to browser, although it's getting better.</li>
+                            <li class="down">But... it's static! You don't want to write JS code to go from slide to slide, you want to write a presentation!</li>
+                            <li class="down">and varies slightly from browser to browser, although it's getting better.<br/>The same could be said about PDF viewers.</li>
+                        </ul>
+                    </block>
+                    <block title="This is where AngularJS comes in" visible="2">
+                        <p><em>ng-pres</em> defines a number of new HTML elements and attributes to help write presentations in the most comfortable way.</p>
+                        <p>It also implements the controls and mechanisms so you can go through the slides without the need for compiling, generating another file or using any other application but a browser.</p>
+                    </block>
+                </slide>
+                <slide>
+                    <block title="Features">
+                        <ul class="updown">
+                            <li class="up">Defines all the basic building blocks you'll need to write presentations.</li>
+                            <li class="up">No compilation or export required.</li>
+                            <li class="up">No external viewer required. Only your browser.</li>
+                            <li class="up">Ensures consistent rendering across all modern browsers on any resolution and aspect ratio.</li>
+                            <li class="down" visible="1">"Wait... What if I want printouts?"</li>
+                            <li class="up" visible="2">Printer-friendly! (see <a href="" ng-click="go_to_slide(12)">this slide</a>)</li>
                         </ul>
                     </block>
                     <block title="This is where AngularJS comes in" visible="2">
@@ -289,12 +345,12 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
                     </block>
                 </slide>
             </section>
+            <slide no-header no-sidebar>
+                <centered>
+                    <p class="big">Let's take a look at a minimalistic example first.</p>
+                </centered>
+            </slide>
             <section title="Using ng-pres">
-                <slide no-header no-sidebar>
-                    <centered>
-                        <p class="big">Let's take a look at a minimalistic example first.</p>
-                    </centered>
-                </slide>
                 <section title="Hello, world!">
                     <slide>
                         <block title="A short example">
@@ -339,7 +395,7 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
                         </block>
                     </slide>
                     <slide>
-                        <block title="Structure of a slide">
+                        <block title="Structure of <em>this</em> slide">
                             <table class="struc small">
                                 <tbody>
                                     <tr><td colspan="2" class="horiz">header</td></tr>
@@ -352,24 +408,22 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
                     </slide>
                 </section>
                 <section title="Styling">
-					<slide>
+                    <slide>
                         <block title="A note about screen size">
                             <p>You probably noticed this presentation stretches across the whole screen. Unlike most modern web things, the goal here is not exactly responsive design. You don't want the layout to adapt to various screen sizes, you want it to look <em>exactly</em> the same on any resolution, save for the size of the pixels.</p>
                             <p>This is achieved in <em>ng-pres</em> by automagically controlling the zoom factor of a fixed-size (yet vectorial) rendering, pretty much what happens when rendering a presentation from a PDF or *Office file.</p>
                             <p>So, the first thing to do is to set up the virtual frame size. By default, <em>ng-pres</em> assumes a 4:3 resolution of 1024x768, which is most common with video projectors. It seems that web browsers are much better at zooming out than at zooming in, so you may want to set up a size much bigger than the target screens.</p>
-                            <div class="ref">CSS</div>
-                            <pre class="syntax">table.presentation { width: 1024px; height: 768px; font-size: 16px; }</pre>
+                            <div class="ref"><p>CSS</p></div>
+                            <pre class="syntax">table.presentation { width: 1024px; height: 768px; font-size: 16px; background: white; }
+body { background: black; } /* this will show around the slides depending on the screen's aspect ratio */</pre>
                         </block>
                         <block title="Standard font sizes">
                             <p>Five typical sizes are defined by default, ranging from huge to tiny. Redefine them at your leisure.</p>
-                            <div class="ref">CSS</div>
-                            <pre class="syntax">.huge { font-size: 1.5em; }
-.big { font-size: 1.25em; }
-.normal { font-size: 1em; }
-.small { font-size: .75em; }
-.tiny { font-size: .5em; }</pre>
+                            <div class="ref"><p>CSS</p></div>
+                            <pre class="syntax">.huge { font-size: 1.5em; }  .big { font-size: 1.25em; }  .normal { font-size: 1em; }
+.small { font-size: .75em; }  .tiny { font-size: .5em; }</pre>
                         </block>
-					</slide>
+                    </slide>
                     <slide>
                         <block title="Styling the layout elements">
                             <p>If you are using the <code>header</code>, <code>footer</code>, or <code>sidebar</code>s, you also want to style them at least to fix their sizes.</p>
@@ -385,79 +439,128 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
                         </block>
                     </slide>
                 </section>
+                <section title="Theming">
+                    <slide>
+                        <block title="Easy peasy">
+                            <p>Theming is best achieved by writing a simplistic Angular directive (no actual JS skill is required). This could be encapsulated in a simpler javascript call, but not doing so lets the theme designer create a complex behaviour if he wishes. The following example is the simple theme used in this presentation.</p>
+                            <div class="ref"><p>Javascript</p></div>
+                            <pre class="syntax">angular.module('ngPres').directive('<em>mytheme</em>', function() {
+    return {
+        template: `
+        <em>&lt;slide-header&gt;
+            &lt;talk-title&gt;&lt;/talk-title&gt;
+            &lt;talk-subtitle&gt;&lt;/talk-subtitle&gt;
+            &lt;progress-bar granularity="step"/&gt;
+        &lt;/slide-header&gt;
+        &lt;slide-left-sidebar&gt;
+            &lt;render-toc clickable/&gt;
+        &lt;/slide-left-sidebar&gt;
+        &lt;slide-footer&gt;
+            &lt;default-footer/&gt;
+        &lt;/slide-footer&gt;</em>
+        `,
+    };
+});</pre>
+                            <p>Next, tweak the CSS classes (described in the <em>Reference</em> section) and you're good to go.</p>
+                            <p>To use this theme, simply add <code class="syntax">&lt;mytheme&gt;&lt;/mytheme&gt;</code> inside the <code>&lt;presentation&gt;</code> tag.</p>
+                            <p>To create a new theme, simply copy-paste this example in a <code>myNewTheme.js</code> file, replace the name and template, and edit your own <code>myNewTheme.css</code> file as needed. Ready for deployment.</p>
+                            <p>As it extends <em>ng-pres</em>, <strong>a theme script must be declared <strong>after</strong> the <code>ng-pres.js</code> script in the HTML head in order to be used</strong>.</p>
+                        </block>
+                    </slide>
+                </section>
+                <section title="Printing">
+                    <slide>
+                        <block title="Print/Preview mode">
+                            <p>Press <code>p</code> to trigger the preview rendering. This will open a new window/tab (so make sure your browser allows this) and output all slides ready for printing, to paper or PDF.</p>
+                            <p>Each slide in the preview mode has the CSS class <code>.showcase</code> which you can style to fit your needs. For instance, this presentation is setup to print two slides per row on A4-sized paper. Beyond styling, it's up to you, your browser, and printer settings.</p>
+                            <div class="ref"><p>CSS</p></div>
+                            <pre class="syntax">div.showcase {
+    width: 240pt;
+    height: 180pt;
+    margin-left: 12pt;
+    margin-right: 12pt;
+    margin-top: 9pt;
+    margin-bottom: 9pt;
+    border: 2pt solid blue;
+    display: inline-block;
+    background: none;
+}</pre>
+                        </block>
+                    </slide>
+                </section>
             </section>
             <section title="Reference">
                 <section title="presentation">
                     <slide>
-                        <block title="<presentation>">
+                        <block title="&amp;lt;presentation&gt;">
                             <p>Encloses all the contents of the talk you are writing.</p>
                             <div class="ref"><p>Syntax</p></div>
-							<pre class="syntax">&lt;presentation <em>attributes...</em>&gt;
+                            <pre class="syntax">&lt;presentation <em>attributes...</em>&gt;
 <em>contents...</em>
 &lt;/presentation&gt;</pre>
-							<div class="ref"><p>Attributes</p></div>
-							<table class="attributes">
-								<thead>
-									<th>Name</th>
-									<th>Value</th>
-									<th>Effect</th>
-								</thead>
-								<tbody>
-									<tr>
-										<td class="attrname">slide-bullet</td>
-										<td class="attrtype">string</td>
-										<td class="attreffect">Set the character(s) used as a slide bullet when rendering the TOC</td>
-									</tr>
-									<tr>
-										<td class="attrname">active-slide-bullet</td>
-										<td class="attrtype">string</td>
-										<td class="attreffect">Set the character(s) used as a bullet for the current slide when rendering the TOC</td>
-									<tr>
-										<td class="attrname">author</td>
-										<td class="attrtype">string</td>
-										<td class="attreffect">Set the <code>talk author</code> metadata.</td>
-									<tr>
-										<td class="attrname">date</td>
-										<td class="attrtype">string</td>
-										<td class="attreffect">Set the <code>talk date</code> metadata.</td>
-									<tr>
-										<td class="attrname">where</td>
-										<td class="attrtype">string</td>
-										<td class="attreffect">Set the <code>talk place</code> metadata.</td>
-									</tr>
-									<tr>
-										<td class="attrname">title</td>
-										<td class="attrtype">string</td>
-										<td class="attreffect">Set the <code>talk title</code> metadata.</td>
-									</tr>
-									<tr>
-										<td class="attrname">subtitle</td>
-										<td class="attrtype">string</td>
-										<td class="attreffect">Set the <code>talk subtitle</code> metadata.</td>
-									</tr>
-									<tr>
-										<td class="attrname">debug-adjustbox</td>
-										<td class="attrtype">none</td>
-										<td class="attreffect">Display borders and a tooltip showing the scaling and translation for each adjustbox.</td>
-									</tr>
-									<tr>
-										<td class="attrname">hide-cursor</td>
-										<td class="attrtype">none</td>
-										<td class="attreffect">Hide the mouse cursor when hovering the presentation.</td>
-									</tr>
-								</tbody>
-							</table>
+                            <div class="ref"><p>Attributes</p></div>
+                            <table class="attributes">
+                                <thead>
+                                    <th>Name</th>
+                                    <th>Value</th>
+                                    <th>Effect</th>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="attrname">slide-bullet</td>
+                                        <td class="attrtype">string</td>
+                                        <td class="attreffect">Set the character(s) used as a slide bullet when rendering the TOC</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="attrname">active-slide-bullet</td>
+                                        <td class="attrtype">string</td>
+                                        <td class="attreffect">Set the character(s) used as a bullet for the current slide when rendering the TOC</td>
+                                    <tr>
+                                        <td class="attrname">author</td>
+                                        <td class="attrtype">string</td>
+                                        <td class="attreffect">Set the <code>talk author</code> metadata.</td>
+                                    <tr>
+                                        <td class="attrname">date</td>
+                                        <td class="attrtype">string</td>
+                                        <td class="attreffect">Set the <code>talk date</code> metadata.</td>
+                                    <tr>
+                                        <td class="attrname">where</td>
+                                        <td class="attrtype">string</td>
+                                        <td class="attreffect">Set the <code>talk place</code> metadata.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="attrname">title</td>
+                                        <td class="attrtype">string</td>
+                                        <td class="attreffect">Set the <code>talk title</code> metadata.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="attrname">subtitle</td>
+                                        <td class="attrtype">string</td>
+                                        <td class="attreffect">Set the <code>talk subtitle</code> metadata.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="attrname">debug-adjustbox</td>
+                                        <td class="attrtype">none</td>
+                                        <td class="attreffect">Display borders and a tooltip showing the scaling and translation for each adjustbox.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="attrname">hide-cursor</td>
+                                        <td class="attrtype">none</td>
+                                        <td class="attreffect">Hide the mouse cursor when hovering the presentation.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                             <div class="ref"><p>CSS Classes</p></div>
-							<ul>
-								<li>.showcase</li>
-								<li>.hide_cursor</li>
-							</ul>
+                            <ul class="classes">
+                                <li>.showcase</li>
+                                <li>.hide_cursor</li>
+                            </ul>
                         </block>
                     </slide>
                 </section>
                 <section title="slide-header">
                     <slide>
-                        <block title="<slide-header> (optional)">
+                        <block title="&amp;lt;slide-header> (optional)">
                             <p>Defines the contents of the <code>header</code> portion of the slides. The header will be omitted if this tag is not present or empty.</p>
                             <div class="ref"><p>Syntax</p></div>
                                 <pre class="syntax">&lt;slide-header&gt;
@@ -465,88 +568,88 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
 &lt;/slide-header&gt;</pre>
                             
                             <div class="ref"><p>CSS Classes</p></div>
-							<ul>
-								<li>none</li>
-							</ul>
+                            <ul class="classes">
+                                <li>none</li>
+                            </ul>
                         </block>
                     </slide>
                 </section>
                 <section title="slide-left-sidebar">
                     <slide>
-                        <block title="<slide-left-sidebar> (optional)">
+                        <block title="&amp;lt;slide-left-sidebar> (optional)">
                             <p>Defines the contents of the <code>left sidebar</code> portion of the slides. The sidebar will be omitted if this tag is not present or empty.</p>
                             <div class="ref"><p>Syntax</p></div>
                                 <pre class="syntax">&lt;slide-left-sidebar&gt;
     <em>contents...</em>
 &lt;/slide-left-sidebar&gt;</pre>
                             <div class="ref"><p>CSS Classes</p></div>
-							<ul>
-								<li>none</li>
-							</ul>
+                            <ul class="classes">
+                                <li>none</li>
+                            </ul>
                         </block>
                     </slide>
                 </section>
                 <section title="slide-right-sidebar">
                     <slide>
-                        <block title="<slide-right-sidebar> (optional)">
+                        <block title="&amp;lt;slide-right-sidebar> (optional)">
                             <p>Defines the contents of the <code>right sidebar</code> portion of the slides. The sidebar will be omitted if this tag is not present or empty.</p>
                             <div class="ref"><p>Syntax</p></div>
                                 <pre class="syntax">&lt;slide-right-sidebar&gt;
     <em>contents...</em>
 &lt;/slide-right-sidebar&gt;</pre>
                             <div class="ref"><p>CSS Classes</p></div>
-							<ul>
-								<li>none</li>
-							</ul>
+                            <ul class="classes">
+                                <li>none</li>
+                            </ul>
                         </block>
                     </slide>
                 </section>
                 <section title="slide-footer">
                     <slide>
-                        <block title="<slide-footer> (optional)">
+                        <block title="&amp;lt;slide-footer> (optional)">
                             <p>Defines the contents of the <code>footer</code> portion of the slides. The footer will be omitted if this tag is not present or empty.</p>
                             <div class="ref"><p>Syntax</p></div>
                                 <pre class="syntax">&lt;slide-footer&gt;
     <em>contents...</em>
 &lt;/slide-footer&gt;</pre>
                             <div class="ref"><p>CSS Classes</p></div>
-							<ul>
-								<li>none</li>
-							</ul>
+                            <ul class="classes">
+                                <li>none</li>
+                            </ul>
                         </block>
                     </slide>
                 </section>
                 <section title="default-footer">
                     <slide>
-                        <block title="<default-footer>">
+                        <block title="&amp;lt;default-footer&gt;">
                             <p>To use inside the <code>&lt;footer&gt;</code> tag. Declares a default footer with the following layout and contents.</p>
                             <div style="text-align: center; width: 100%; border: 1px dashed black; font-size: .75em;">
                                 <div style="display: inline-block; float: left; padding-left: 1em; padding-right: 1em; border-right: 1px dashed black;"><code>&lt;talk-date/&gt;</code></div>
                                 <div style="display: inline-block; float: left; padding-left: 1em; padding-right: 1em; border-right: 1px dashed black;"><code>&lt;talk-where/&gt;</code></div>
-                                <div style="display: inline-block; float: right; width: 300px; padding-left: 1em; padding-right: 1em; border-left: 1px dashed black;"><code>&lt;slide-counter/&gt;&amp;nbsp;</code></div>
+                                <div style="display: inline-block; float: right; width: 320px; padding-left: 1em; padding-right: 1em; border-left: 1px dashed black;"><code>&lt;slide-counter/&gt;&amp;nbsp;</code></div>
                                 <code>&lt;talk-author/&gt;</code>
                             </div>
                             <div class="ref"><p>Syntax</p></div>
                                 <pre class="syntax">&lt;default-footer&gt;&lt;/default-footer&gt;</pre>
                             <div class="ref"><p>CSS Classes</p></div>
-							<ul>
-								<li>.talk-author</li>
-								<li>.talk-where</li>
-								<li>.talk-date</li>
-								<li>.slide-counter</li>
-							</ul>
+                            <ul class="classes">
+                                <li>.talk-author</li>
+                                <li>.talk-where</li>
+                                <li>.talk-date</li>
+                                <li>.slide-counter</li>
+                            </ul>
                         </block>
                     </slide>
                 </section>
                 <section title="section">
                     <slide>
-                        <block title="<section>">
+                        <block title="&amp;lt;section&gt;">
                             <p>Declares a new section or subsection. It will automatically be appended to the Table of Contents. There is no limit to the number of levels, but the default CSS only defines the styles for the first three levels.</p>
                             <div class="ref"><p>Syntax</p></div>
                                 <pre class="syntax">&lt;section <em>title="..."</em>&gt;
     <em>contents...</em>
 &lt;/section&gt;</pre>
-							<div class="ref"><p>Attributes</p></div>
+                            <div class="ref"><p>Attributes</p></div>
                                 <table class="attributes">
                                     <thead>
                                         <th>Name</th>
@@ -562,21 +665,21 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
                                     </tbody>
                                 </table>
                             <div class="ref"><p>CSS Classes</p></div>
-							<ul>
-								<li>none</li>
-							</ul>
+                            <ul class="classes">
+                                <li>none</li>
+                            </ul>
                         </block>
                     </slide>
                 </section>
                 <section title="slide">
                     <slide>
-                        <block title="<slide>">
+                        <block title="&amp;lt;slide&gt;">
                             <p>Creates a new slide.</p>
                             <div class="ref"><p>Syntax</p></div>
                                 <pre class="syntax">&lt;slide <em>attributes...</em>&gt;
     <em>contents...</em>
 &lt;/slide&gt;</pre>
-							<div class="ref"><p>Attributes</p></div>
+                            <div class="ref"><p>Attributes</p></div>
                                 <table class="attributes">
                                     <thead>
                                         <th>Name</th>
@@ -607,26 +710,36 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
                                     </tbody>
                                 </table>
                             <div class="ref"><p>CSS Classes</p></div>
-							<ul>
-								<li>.slide</li>
-								<li>.header</li>
-								<li>.left-sidebar</li>
-								<li>.right-sidebar</li>
-								<li>.footer</li>
-								<li>.hidden</li>
-							</ul>
+                            <ul class="classes">
+                                <li>.slide</li>
+                                <li>.header</li>
+                                <li>.left-sidebar</li>
+                                <li>.right-sidebar</li>
+                                <li>.footer</li>
+                                <li>.hidden</li>
+                            </ul>
+                            <div class="ref"><p>Equivalent HTML</p></div>
+                            <pre class="syntax">&lt;table class="presentation"&gt;&lt;tbody&gt;
+    &lt;tr&gt;&lt;td class="header" colspan="3"&gt;<em>header...</em>&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td class="left-sidebar"&gt;<em>left sidebar...</em>&lt;/td&gt;
+        &lt;td class="slide"&gt;&lt;div class="slide"&gt;<em>slide...</em>&lt;/div&gt;&lt;/td&gt;
+        &lt;td class="right-sidebar"&gt;<em>right sidebar...</em>&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;&lt;td class="footer" colspan="3"&gt;<em>footer...</em>&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;&lt;/table&gt;</pre>
                         </block>
                     </slide>
                 </section>
                 <section title="block">
                     <slide>
-                        <block title="<block>">
+                        <block title="&amp;lt;block&gt;">
                             <p>Created a titled block in the contents of a slide.</p>
                             <div class="ref"><p>Syntax</p></div>
                                 <pre class="syntax">&lt;block <em>title="..."</em>&gt;
     <em>contents...</em>
 &lt;/block&gt;</pre>
-							<div class="ref"><p>Attributes</p></div>
+                            <div class="ref"><p>Attributes</p></div>
                                 <table class="attributes">
                                     <thead>
                                         <th>Name</th>
@@ -642,19 +755,28 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
                                     </tbody>
                                 </table>
                             <div class="ref"><p>CSS Classes</p></div>
-							<ul>
-								<li>none</li>
-							</ul>
+                            <ul class="classes">
+                                <li>none</li>
+                            </ul>
+                            <div class="ref"><p>Equivalent HTML</p></div>
+                            <pre class="syntax">&lt;div class="block"&gt;
+    &lt;div class="block-title"&gt;
+        &lt;h1&gt;<em>block title</em>&lt;/h1&gt;
+    &lt;/div&gt;
+    &lt;div class="block-content"&gt;
+        <em>contents...</em>
+    &lt;/div&gt;
+&lt;/div&gt;</pre>
                         </block>
                     </slide>
                 </section>
                 <section title="render-toc">
                     <slide>
-                        <block title="<render-toc>">
+                        <block title="&amp;lt;render-toc&gt;">
                             <p>Render the Table of Contents.</p>
                             <div class="ref"><p>Syntax</p></div>
                                 <pre class="syntax">&lt;render-toc <em>attributes...</em>&gt;&lt;/render-toc&gt;</pre>
-							<div class="ref"><p>Attributes</p></div>
+                            <div class="ref"><p>Attributes</p></div>
                                 <table class="attributes">
                                     <thead>
                                         <th>Name</th>
@@ -670,28 +792,38 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
                                     </tbody>
                                 </table>
                             <div class="ref"><p>CSS Classes</p></div>
-							<ul>
-								<li>toc</li>
-								<li>current-toc-item</li>
-								<li>current-toc-item-parent</li>
-								<li>inactive-toc-item</li>
-								<li>slide-bullets</li>
-								<li>slide-bullet</li>
-								<li>active-slide-bullet</li>
-							</ul>
+                            <ul class="classes">
+                                <li>.toc</li>
+                                <li>.current-toc-item</li>
+                                <li>.current-toc-item-parent</li>
+                                <li>.inactive-toc-item</li>
+                                <li>.slide-bullets</li>
+                                <li>.slide-bullet</li>
+                                <li>.active-slide-bullet</li>
+                            </ul>
+                            <div class="ref"><p>Equivalent HTML</p></div>
+                            <pre class="syntax">&lt;ul class="toc"&gt;
+    &lt;li class="toc-item<em>-state?</em>&gt;<em>Section title</em>
+        &lt;div class="slide-bullets"&gt;
+            &lt;div class="<em>state-?</em>slide-bullet"&gt;<em>slide bullet character</em>&lt;/div&gt;
+            <em>...</em>
+        &lt;/div&gt;
+    &lt;/li&gt;
+    <em>...</em>
+&lt;/ul&gt;</pre>
                         </block>
                     </slide>
                 </section>
                 <section title="on-section">
                     <slide>
-                        <block title="<on-section>">
+                        <block title="&amp;lt;on-section&gt;">
                             <p>Declares the contents of the page to display upon entering a section. Typically this will be used to show the Table of Contents when you wish not to use a sidebar to render the Table of Contents.</p>
-							<p>The default behaviour if this element is not used is to <strong>not</strong> display specific contents upon entering a new section.</p>
+                            <p>The default behaviour if this element is not used is to <strong>not</strong> display specific contents upon entering a new section.</p>
                             <div class="ref"><p>Syntax</p></div>
-							<pre class="syntax">&lt;on-section <em>attributes...</em>&gt;
+                            <pre class="syntax">&lt;on-section <em>attributes...</em>&gt;
     <em>contents...</em>
 &lt;/on-section&gt;</pre>
-							<div class="ref"><p>Attributes</p></div>
+                            <div class="ref"><p>Attributes</p></div>
                                 <table class="attributes">
                                     <thead>
                                         <th>Name</th>
@@ -722,45 +854,45 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
                                     </tbody>
                                 </table>
                             <div class="ref"><p>CSS Classes</p></div>
-							<ul>
-								<li>.slide</li>
-								<li>.header</li>
-								<li>.left-sidebar</li>
-								<li>.right-sidebar</li>
-								<li>.footer</li>
-								<li>.hidden</li>
-							</ul>
+                            <ul class="classes">
+                                <li>.slide</li>
+                                <li>.header</li>
+                                <li>.left-sidebar</li>
+                                <li>.right-sidebar</li>
+                                <li>.footer</li>
+                                <li>.hidden</li>
+                            </ul>
                         </block>
                     </slide>
                 </section>
                 <section title="visible">
                     <slide>
-						<block title="visible=&quot;steps...&quot;">
-							<p>Make an element visible only during the specified steps on a slide. This creates progressive slides. <code>steps</code> is a comma-separated list of ranges. The last step of a slide is the greatest number <strong>beginning</strong> a range. Ranges can be open on either side, but not both.</p>
-							<p>The element doesn't take any space and doesn't influence layout when it is not displayed.</p>
+                        <block title="visible=&quot;steps...&quot;">
+                            <p>Make an element visible only during the specified steps on a slide. This creates progressive slides. <code>steps</code> is a comma-separated list of ranges. The last step of a slide is the greatest number <strong>beginning</strong> a range. Ranges can be open on either side, but not both.</p>
+                            <p>The element doesn't take any space and doesn't influence layout when it is not displayed.</p>
                             <div class="ref"><p>Syntax</p></div>
                                 <pre class="syntax">&lt;some-element <em>visible="RANGE_LIST"</em>&gt;...&lt;/some-element&gt;</pre>
-								Examples:
-								<pre class="syntax">&lt;p visible="1"&gt;I appear only in step #1.&lt;p&gt;
+                                Examples:
+                                <pre class="syntax">&lt;p visible="1"&gt;I appear only in step #1.&lt;p&gt;
 &lt;p visible="2-4"&gt;I appear in steps #2 to #4, included.&lt;p&gt;
 &lt;p visible="1,3-5"&gt;I appear in steps #1, #3, #4, and #5.&lt;p&gt;
 &lt;p visible="2-"&gt;I appear from step #2 on.&lt;p&gt;
 &lt;p visible="-3"&gt;I appear until step #3, included.&lt;p&gt;
 &lt;p visible="-2,4-"&gt;I disappear in step #3.&lt;p&gt;</pre>
                             <div class="ref"><p>CSS Classes</p></div>
-							<ul>
-								<li>none</li>
-							</ul>
-						</block>
-					</slide>
+                            <ul class="classes">
+                                <li>none</li>
+                            </ul>
+                        </block>
+                    </slide>
                 </section>
                 <section title="progress-bar">
                     <slide>
-                        <block title="<progress-bar>">
+                        <block title="&amp;lt;progress-bar&gt;">
                             <p>Render a progress bar.</p>
                             <div class="ref"><p>Syntax</p></div>
                                 <pre class="syntax">&lt;progress-bar <em>attributes...</em>&gt;&lt;/progress-bar&gt;</pre>
-							<div class="ref"><p>Attributes</p></div>
+                            <div class="ref"><p>Attributes</p></div>
                                 <table class="attributes">
                                     <thead>
                                         <th>Name</th>
@@ -776,20 +908,24 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
                                     </tbody>
                                 </table>
                             <div class="ref"><p>CSS Classes</p></div>
-							<ul>
-								<li>.progress-bar</li>
-								<li>.progress-bar-inner</li>
-							</ul>
+                            <ul class="classes">
+                                <li>.progress-bar</li>
+                                <li>.progress-bar-inner</li>
+                            </ul>
+                            <div class="ref"><p>Equivalent HTML</p></div>
+                            <pre class="syntax">&lt;div class="progress-bar"&gt;
+    &lt;div class="progress-bar-inner" style="width: <em>current progress</em>%;"&gt;&lt;/div&gt;
+&lt;/div&gt;</pre>
                         </block>
                     </slide>
                 </section>
                 <section title="slide-counter">
                     <slide>
-                        <block title="<progress-bar>">
+                        <block title="&amp;lt;progress-bar&gt;">
                             <p>Render a slide counter.</p>
                             <div class="ref"><p>Syntax</p></div>
                                 <pre class="syntax">&lt;slide-counter <em>attributes...</em>&gt;&lt;/slide-counter&gt;</pre>
-							<div class="ref"><p>Attributes</p></div>
+                            <div class="ref"><p>Attributes</p></div>
                                 <table class="attributes">
                                     <thead>
                                         <th>Name</th>
@@ -805,114 +941,116 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
                                     </tbody>
                                 </table>
                             <div class="ref"><p>CSS Classes</p></div>
-							<ul>
-								<li>.slide-counter</li>
-							</ul>
+                            <ul class="classes">
+                                <li>.slide-counter</li>
+                            </ul>
+                            <div class="ref"><p>Equivalent HTML</p></div>
+                            <pre class="syntax">&lt;div class="slide-counter"&gt;<em>current slide</em> / <em>slide count</em>&lt;/div&gt;</pre>
                         </block>
-					</slide>
+                    </slide>
                 </section>
                 <section title="talk-author">
                     <slide>
-                        <block title="<talk-author>">
-							<p>Render the <code>talk-author</code> metadata.</p>
+                        <block title="&amp;lt;talk-author&gt;">
+                            <p>Render the <code>talk-author</code> metadata.</p>
                             <div class="ref"><p>Syntax</p></div>
-							<pre class="syntax">&lt;talk-author&gt;&lt;/talk-author&gt;</pre>
+                            <pre class="syntax">&lt;talk-author&gt;&lt;/talk-author&gt;</pre>
                             <div class="ref"><p>CSS Classes</p></div>
-							<ul>
-								<li>.talk-author</li>
-							</ul>
-							<div class="ref"><p>Equivalent HTML</p></div>
+                            <ul class="classes">
+                                <li>.talk-author</li>
+                            </ul>
+                            <div class="ref"><p>Equivalent HTML</p></div>
                             <pre class="syntax">&lt;span class="talk-author"&gt;<em>author metadata</em>&lt;/span&gt;</pre>
                         </block>
-					</slide>
+                    </slide>
                 </section>
                 <section title="talk-where">
                     <slide>
-                        <block title="<talk-where>">
-							<p>Render the <code>talk-where</code> metadata.</p>
+                        <block title="&amp;lt;talk-where&gt;">
+                            <p>Render the <code>talk-where</code> metadata.</p>
                             <div class="ref"><p>Syntax</p></div>
-							<pre class="syntax">&lt;talk-where&gt;&lt;/talk-where&gt;</pre>
+                            <pre class="syntax">&lt;talk-where&gt;&lt;/talk-where&gt;</pre>
                             <div class="ref"><p>CSS Classes</p></div>
-							<ul>
-								<li>.talk-where</li>
-							</ul>
-							<div class="ref"><p>Equivalent HTML</p></div>
+                            <ul class="classes">
+                                <li>.talk-where</li>
+                            </ul>
+                            <div class="ref"><p>Equivalent HTML</p></div>
                             <pre class="syntax">&lt;span class="talk-where"&gt;<em>where metadata</em>&lt;/span&gt;</pre>
                         </block>
-					</slide>
+                    </slide>
                 </section>
                 <section title="talk-date">
                     <slide>
-                        <block title="<talk-date>">
-							<p>Render the <code>talk-date</code> metadata.</p>
+                        <block title="&amp;lt;talk-date&gt;">
+                            <p>Render the <code>talk-date</code> metadata.</p>
                             <div class="ref"><p>Syntax</p></div>
-							<pre class="syntax">&lt;talk-date&gt;&lt;/talk-date&gt;</pre>
+                            <pre class="syntax">&lt;talk-date&gt;&lt;/talk-date&gt;</pre>
                             <div class="ref"><p>CSS Classes</p></div>
-							<ul>
-								<li>.talk-date</li>
-							</ul>
-							<div class="ref"><p>Equivalent HTML</p></div>
+                            <ul class="classes">
+                                <li>.talk-date</li>
+                            </ul>
+                            <div class="ref"><p>Equivalent HTML</p></div>
                             <pre class="syntax">&lt;span class="talk-date"&gt;<em>date metadata</em>&lt;/span&gt;</pre>
                         </block>
-					</slide>
+                    </slide>
                 </section>
                 <section title="talk-title">
                     <slide>
-                        <block title="<talk-title>">
-							<p>Render the <code>talk-title</code> metadata.</p>
+                        <block title="&amp;lt;talk-title&gt;">
+                            <p>Render the <code>talk-title</code> metadata.</p>
                             <div class="ref"><p>Syntax</p></div>
-							<pre class="syntax">&lt;talk-title&gt;&lt;/talk-title&gt;</pre>
+                            <pre class="syntax">&lt;talk-title&gt;&lt;/talk-title&gt;</pre>
                             <div class="ref"><p>CSS Classes</p></div>
-							<ul>
-								<li>none</li>
-							</ul>
-							<div class="ref"><p>Equivalent HTML</p></div>
+                            <ul class="classes">
+                                <li>none</li>
+                            </ul>
+                            <div class="ref"><p>Equivalent HTML</p></div>
                             <pre class="syntax">&lt;h1&gt;<em>title metadata</em>&lt;/h1&gt;</pre>
                         </block>
-					</slide>
+                    </slide>
                 </section>
                 <section title="talk-subtitle">
                     <slide>
-                        <block title="<talk-subtitle>">
-							<p>Render the <code>talk-subtitle</code> metadata.</p>
+                        <block title="&amp;lt;talk-subtitle&gt;">
+                            <p>Render the <code>talk-subtitle</code> metadata.</p>
                             <div class="ref"><p>Syntax</p></div>
-							<pre class="syntax">&lt;talk-subtitle&gt;&lt;/talk-subtitle&gt;</pre>
+                            <pre class="syntax">&lt;talk-subtitle&gt;&lt;/talk-subtitle&gt;</pre>
                             <div class="ref"><p>CSS Classes</p></div>
-							<ul>
-								<li>none</li>
-							</ul>
-							<div class="ref"><p>Equivalent HTML</p></div>
+                            <ul class="classes">
+                                <li>none</li>
+                            </ul>
+                            <div class="ref"><p>Equivalent HTML</p></div>
                             <pre class="syntax">&lt;h2&gt;<em>subtitle metadata</em>&lt;/h2&gt;</pre>
                         </block>
-					</slide>
+                    </slide>
                 </section>
                 <section title="centered">
                     <slide>
-                        <block title="<centered>">
+                        <block title="&amp;lt;centered&gt;">
                             <p>Center the contents both horizontally and vertically.</p>
                             <div class="ref"><p>Syntax</p></div>
                                 <pre class="syntax">&lt;centered&gt;
     <em>contents...</em>
 &lt;/centered&gt;</pre>
                             <div class="ref"><p>CSS Classes</p></div>
-							<ul>
-								<li>table.full</li>
-								<li>td.center</li>
-							</ul>
-							<div class="ref"><p>Equivalent HTML</p></div>
+                            <ul class="classes">
+                                <li>table.full</li>
+                                <li>td.center</li>
+                            </ul>
+                            <div class="ref"><p>Equivalent HTML</p></div>
                             <pre class="syntax">&lt;table class="full"&gt;&lt;tr&gt;&lt;td class="center"&gt;<em>contents...</em>&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</pre>
                         </block>
                     </slide>
                 </section>
                 <section title="adjustbox">
                     <slide>
-                        <block title="<adjustbox>">
-							<p>Scale the contents to match the size of the adjustbox. Can maintain aspect ratio if desired. The adjustbox <strong>must</strong> be styled (either by CSS class or by using the <code>style</code> attribute) to the desired size, otherwise its size is 0. By default, stretch the contents to fill the adjustbox.</p>
+                        <block title="&amp;lt;adjustbox&gt;">
+                            <p>Scale the contents to match the size of the adjustbox. Can maintain aspect ratio if desired. The adjustbox <strong>must</strong> be styled (either by CSS class or by using the <code>style</code> attribute) to the desired size, otherwise its size is 0. By default, stretch the contents to fill the adjustbox.</p>
                             <div class="ref"><p>Syntax</p></div>
                                 <pre class="syntax">&lt;adjustbox <em>attributes</em>&gt;
     <em>contents...</em>
 &lt;/adjustbox&gt;</pre>
-							<div class="ref"><p>Attributes</p></div>
+                            <div class="ref"><p>Attributes</p></div>
                                 <table class="attributes">
                                     <thead>
                                         <th>Name</th>
@@ -928,10 +1066,10 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
                                     </tbody>
                                 </table>
                             <div class="ref"><p>CSS Classes</p></div>
-							<ul>
-								<li>none</li>
-							</ul>
-							<div class="ref"><p>Equivalent HTML</p></div>
+                            <ul class="classes">
+                                <li>none</li>
+                            </ul>
+                            <div class="ref"><p>Equivalent HTML</p></div>
                             <pre class="syntax">&lt;div <em>with user styling</em>&gt;
     &lt;div <em>magical resizing style</em>&gt;
         &lt;div <em>to properly box the contents</em>&gt;<em>contents...</em>&lt;/div&gt;
@@ -941,19 +1079,7 @@ div.ref { background: lightgreen; padding-left: 1em; padding-top: .5em; font-wei
                     </slide>
                 </section>
             </section>
-            <slide-header>
-                <!--<h1>ng-pres: write your presentation slides with HTML</h1>
-                <h2>powered by AngularJS</h2>-->
-                <talk-title></talk-title>
-                <talk-subtitle></talk-subtitle>
-                <progress-bar granularity="step"/>
-            </slide-header>
-            <slide-left-sidebar>
-                <render-toc clickable/>
-            </slide-left-sidebar>
-            <slide-footer>
-                <default-footer/>
-            </slide-footer>
+            <mytheme></mytheme>
         </presentation>
             <!-- <on-section no-header no-sidebar no-slide-counter>
                 <div class="toc-page" style="">
