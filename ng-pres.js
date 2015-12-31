@@ -1,5 +1,10 @@
 (function() {
 
+    function is_module_defined(module_name) {
+        try { angular.module(module_name) } catch(err) { return false; }
+        return true;
+    }
+
     function trim_hidden(nodes) {
         /*console.log("trim_hidden", nodes);*/
         for (var i = nodes.length - 1; i >= 0; --i) {
@@ -152,10 +157,10 @@ TocEntry.prototype = {
     }
 };
 
+var opt_dep = ['ngTouch'].filter(is_module_defined);
 
 
-
-var app = angular.module('ngPres', [])
+var app = angular.module('ngPres', opt_dep)
 .run(function($templateCache) {
     $templateCache
         .put("toc-item.html",
@@ -233,7 +238,7 @@ var app = angular.module('ngPres', [])
         /*template: '<adjustbox maintain-aspect style="width: 100%; height: 100%;"><ng-transclude/></adjustbox><to-print class="hidden" id="to_print" ng-bind-html="setup_print()"></to-print>',*/
         /*template: '<adjustbox maintain-aspect style="width: 100%; height: 100%;"><ng-transclude/></adjustbox><to-print/>',*/
         template: `
-            <span><div ng-class="{'showcase': showcasing, 'full': !showcasing, 'hide_cursor': hide_cursor}">
+            <span><div ng-class="{'showcase': showcasing, 'full': !showcasing, 'hide_cursor': hide_cursor}" ng-swipe-left="next_step()" ng-swipe-right="previous_step()">
                 <adjustbox maintain-aspect style="width: 100%; height: 100%;">
                     <ng-transclude/>
                 </adjustbox>
