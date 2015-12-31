@@ -326,7 +326,7 @@ var app = angular.module('ngPres', opt_dep)
             $scope.showcasing = false;
 
             $scope.go_to_slide = function(sl, st) {
-                console.log("go to slide", sl, st);
+                /*console.log("go to slide", sl, st);*/
                 if (sl === undefined) {
                     return;
                 }
@@ -351,34 +351,17 @@ var app = angular.module('ngPres', opt_dep)
                     }
                 });
 
-            $scope.$watch(function () {
-                return location.hash;
-            }, function (value) {
-                console.log("location changed!", value);
-            });
+            /*$scope.$watch(function () {*/
+                /*return location.hash;*/
+            /*}, function (value) {*/
+                /*console.log("location changed!", value);*/
+            /*});*/
 
             $scope.next_slide = function() {
                 if ($scope.current_slide < ($scope.slide_count - 1)) {
                     /*console.log('next slide!');*/
                     $scope.current_slide += 1;
                 }
-            };
-
-            $scope.slide_list = function() {
-                var ret = [];
-                for (var i = 0; i < $scope.all_slides.length; ++i) {
-                    for (var s = 0; s <= $scope.steps_by_slide[i]; ++s) {
-                        ret.push([i, s]);
-                    }
-                }
-                console.log("slide_list", ret);
-                return ret;
-            };
-
-            $scope.slide_html = function(i) {
-                var html = angular.element($scope.all_slides[i]).html();
-                console.log("slide_html", i);
-                return $sce.trustAsHtml(html);
             };
 
             $scope.previous_slide = function() {
@@ -501,7 +484,7 @@ var app = angular.module('ngPres', opt_dep)
             this.current_section = function() { return this.section_stack[this.section_stack.length - 1]; };
 
             this.enter_section = function(title) {
-                console.log("ENTER SECTION " + title);
+                /*console.log("ENTER SECTION " + title);*/
                 var section = new TocEntry(title);  // {title: title, slides: [], children: []};
                 this.current_section().children.push(section);
                 this.section_stack.push(section);
@@ -511,7 +494,7 @@ var app = angular.module('ngPres', opt_dep)
             };
 
             this.leave_section = function() {
-                console.log("LEAVE SECTION " + this.current_section().title);
+                /*console.log("LEAVE SECTION " + this.current_section().title);*/
                 this.section_stack.pop();
             };
 
@@ -567,7 +550,7 @@ var app = angular.module('ngPres', opt_dep)
             scope.currentClass = attr.currentClass;
             scope.clickable = attr.clickable !== undefined;
             scope.go_to_slide = function(sl) {
-                console.log("got click!", sl);
+                /*console.log("got click!", sl);*/
                 if (scope.clickable) {
                     presentation.go_to_slide(sl, 0);
                 }
@@ -637,7 +620,7 @@ var app = angular.module('ngPres', opt_dep)
         scope: true,
         link: {
             pre: function(scope, element, attr, presentation) {
-                console.log("ENTERING SLIDE LINK");
+                /*console.log("ENTERING SLIDE LINK");*/
 
                 scope.with_header = attr.noHeader === undefined;
                 scope.with_sidebar = attr.noSidebar === undefined;
@@ -649,7 +632,7 @@ var app = angular.module('ngPres', opt_dep)
                 presentation.ensure_steps([]);
             },
             post: function(scope, element, attr, presentation) {
-                console.log("LINKED SLIDE #" + scope.slide_index + " counting " + (1 + scope.steps_by_slide[scope.slide_index]) + " steps");
+                /*console.log("LINKED SLIDE #" + scope.slide_index + " counting " + (1 + scope.steps_by_slide[scope.slide_index]) + " steps");*/
             }
         },
         /*controller: function() {},*/
@@ -823,19 +806,23 @@ var app = angular.module('ngPres', opt_dep)
     };
 })
 
-.directive('block', function() {
+.directive('block', ['$sce', function($sce) {
     return {
         restrict: 'E',
         transclude: true,
-        scope: {title: '@'},
+        /*scope: {title: '@'},*/
+        scope: {},
+        link: function(scope, element, attr) {
+            scope.title = $sce.trustAsHtml(attr.title);
+        },
         template: `
             <div class="block">
-                <div class="block-title"><h1>{{title}}</h1></div>
+                <div class="block-title"><h1 ng-bind-html="title"></h1></div>
                 <div class="block-content" ng-transclude></div>
             </div>
         `
     };
-})
+}])
 
 .directive('slideCounter', ['$sce', function($sce) {
     return {
@@ -861,7 +848,7 @@ var app = angular.module('ngPres', opt_dep)
             };
         },
         /*template: '<p ng-if="!$slide.disable_slide_counter" class="slide-counter">{{(use_step ? $parent.global_step : $parent.current_slide) + 1}}&nbsp;/&nbsp;{{use_step ? $parent.step_count : $parent.slide_count}}</p>'*/
-        template: '<p class="slide-counter" style="width: 50px;" ng-bind-html="render()"></p>'
+        template: '<p class="slide-counter" style="" ng-bind-html="render()"></p>'
     };
 }])
 
@@ -879,10 +866,10 @@ var app = angular.module('ngPres', opt_dep)
         require: '^presentation',
         scope: false,
         template: `
-            <div style="text-align: center; width: 100%;">
-                <div style="display: inline-block; float: left; padding-left: 1em; padding-right: 1em;"><talk-date/></div>
-                <div style="display: inline-block; float: left; padding-left: 1em; padding-right: 1em;"><talk-where/></div>
-                <div style="display: inline-block; float: right; width: 50px; padding-left: 1em; padding-right: 1em;"><slide-counter/>&nbsp;</div>
+            <div style="text-align: center; width: 100%; padding: 0;">
+                <div style="display: inline-block; float: left; padding-top: 0; padding-bottom: 0; padding-left: 1em; padding-right: 1em;"><talk-date/></div>
+                <div style="display: inline-block; float: left; padding-top: 0; padding-bottom: 0; padding-left: 1em; padding-right: 1em;"><talk-where/></div>
+                <div style="display: inline-block; float: right; padding-top: 0; padding-bottom: 0; padding-left: 1em; padding-right: 1em;"><slide-counter/>&nbsp;</div>
                 <talk-author/>
             </div>
             `
