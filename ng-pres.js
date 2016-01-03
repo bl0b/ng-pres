@@ -1,5 +1,117 @@
 (function() {
 
+    mousebuttons = {
+        'left': 0,
+        'middle': 1,
+        'right': 2,
+    };
+
+    keycodes = {
+        'backspace': 8,
+        'tab': 9,
+        'enter': 13,
+        'shift': 16,
+        'ctrl': 17,
+        'alt': 18,
+        'pause/break': 19,
+        'pause': 19,
+        'break': 19,
+        'caps lock': 20,
+        'escape': 27,
+        'space': 32,
+        'page up': 33,
+        'page down': 34,
+        'end': 35,
+        'home': 36,
+        'left arrow': 37,
+        'up arrow': 38,
+        'right arrow': 39,
+        'down arrow': 40,
+        'insert': 45,
+        'delete': 46,
+        '0': 48,
+        '1': 49,
+        '2': 50,
+        '3': 51,
+        '4': 52,
+        '5': 53,
+        '6': 54,
+        '7': 55,
+        '8': 56,
+        '9': 57,
+        'a': 65,
+        'b': 66,
+        'c': 67,
+        'd': 68,
+        'e': 69,
+        'f': 70,
+        'g': 71,
+        'h': 72,
+        'i': 73,
+        'j': 74,
+        'k': 75,
+        'l': 76,
+        'm': 77,
+        'n': 78,
+        'o': 79,
+        'p': 80,
+        'q': 81,
+        'r': 82,
+        's': 83,
+        't': 84,
+        'u': 85,
+        'v': 86,
+        'w': 87,
+        'x': 88,
+        'y': 89,
+        'z': 90,
+        'left window key': 91,
+        'right window key': 92,
+        'select key': 93,
+        'numpad 0': 96,
+        'numpad 1': 97,
+        'numpad 2': 98,
+        'numpad 3': 99,
+        'numpad 4': 100,
+        'numpad 5': 101,
+        'numpad 6': 102,
+        'numpad 7': 103,
+        'numpad 8': 104,
+        'numpad 9': 105,
+        'multiply': 106,
+        'add': 107,
+        'subtract': 109,
+        'decimal point': 110,
+        'divide': 111,
+        'f1': 112,
+        'f2': 113,
+        'f3': 114,
+        'f4': 115,
+        'f5': 116,
+        'f6': 117,
+        'f7': 118,
+        'f8': 119,
+        'f9': 120,
+        'f10': 121,
+        'f11': 122,
+        'f12': 123,
+        'num lock': 144,
+        'scroll lock': 145,
+        'semi-colon': 186,
+        'equal sign': 187,
+        'comma': 188,
+        'dash': 189,
+        'period': 190,
+        'forward slash': 191,
+        'grave accent': 192,
+        'open bracket': 219,
+        'back slash': 220,
+        'close braket': 221,
+        'single quote': 222,
+    };
+
+    var keep_defaults = ['mousedown:0'];
+
     function is_module_defined(module_name) {
         try { angular.module(module_name) } catch(err) { return false; }
         return true;
@@ -180,63 +292,12 @@ var app = angular.module('ngPres', opt_dep)
                  </li>
              </ul>
             `);
-/*
-    $templateCache
-        .put("presentation.html",
-             `
-             <adjustbox maintain-aspect style="width: 100%; height: 100%;">
-             <table class="presentation">
-                <tbody>
-                  <tr><td class="header" colspan="3" ng-transclude="header"></td></tr>
-                  <tr>
-                    <td class="left-sidebar" ng-transclude="leftSidebar"></td>
-                    <td class="slide" ng-transclude></td>
-                    <td class="right-sidebar" ng-transclude="rightSidebar"></td>
-                  </tr>
-                  <tr><td class="footer" colspan="3" ng-transclude="footer">
-                  </td></tr>
-              </table>
-              </adjustbox>
-             `);
-    $templateCache
-        .put("presentation.html", '<adjustbox maintain-aspect style="width: 100%; height: 100%;"><ng-transclude/></adjustbox>');
-    $templateCache
-        .put("frame.html",
-             `
-             <div ng-class="{'hidden': slide_index != current_slide}">
-              <!-- <adjustbox maintain-aspect style="width: 100%; height: 100%;"> -->
-                 <table class="presentation">
-                   <tbody>
-                     <tr><td class="header" colspan="3"><div class="header" ng-bind-html="header()"></div></td></tr>
-                     <tr>
-                       <td class="left-sidebar"><div class="left-sidebar" ng-bind-html="leftSidebar()"></div></td>
-                       <td class="slide"><div class="slide" ng-transclude></div></td>
-                       <td class="right-sidebar"><div class="right-sidebar" ng-bind-html="rightSidebar()"></div></td>
-                     </tr>
-                     <tr><td class="footer" colspan="3"><div class="footer" ng-bind-html="footer()"></div></td></tr>
-                   </tbody>
-                 </table>
-               <!-- </adjustbox> -->
-             </div>
-             `);
-    $templateCache
-        .put("section.html", '<enter-section title="{{title}}"/><ng-transclude/><leave-section/>');
-//*/
 })
 
 .directive('presentation', ['$document', '$rootScope', '$sce', '$timeout', function($document, $rootScope, $sce, $timeout) {
     return {
         restrict: 'E',
-        /*transclude: {*/
-            /*'header': '?header',*/
-            /*'leftSidebar': '?leftSidebar',*/
-            /*'rightSidebar': '?rightSidebar',*/
-            /*'footer': '?footer'*/
-        /*},*/
         transclude: true,
-        //templateUrl: "presentation.html", //'<div class="presentation"><ng-transclude></ng-transclude></div>',
-        /*template: '<adjustbox maintain-aspect style="width: 100%; height: 100%;"><ng-transclude/></adjustbox><to-print class="hidden" id="to_print" ng-bind-html="setup_print()"></to-print>',*/
-        /*template: '<adjustbox maintain-aspect style="width: 100%; height: 100%;"><ng-transclude/></adjustbox><to-print/>',*/
         template: `
             <span><div ng-class="{'showcase': showcasing, 'full': !showcasing, 'hide_cursor': hide_cursor}" ng-swipe-left="next_step()" ng-swipe-right="previous_step()">
                 <adjustbox maintain-aspect style="width: 100%; height: 100%;">
@@ -263,9 +324,15 @@ var app = angular.module('ngPres', opt_dep)
                 /*console.log('setting up keydown event callback');*/
                 $document.bind('keydown', function(e) {
                     /*console.log('Got keydown:', e.keyCode);*/
-                    $rootScope.$broadcast('keydown', e);
+                    /*$rootScope.$broadcast('keydown', e);*/
                     $rootScope.$broadcast('keydown:' + e.keyCode, e);
                     /*scope.$digest();*/
+                });
+                $document.bind('mousedown', function(e) {
+                    /*console.log("mouse down", e);*/
+                    /*$rootScope.$broadcast('mousedown', e);*/
+                    $rootScope.$broadcast('mousedown:' + e.button, e);
+                    return false;
                 });
 
                 scope.all_section_slide = element.find('on-section');
@@ -296,11 +363,6 @@ var app = angular.module('ngPres', opt_dep)
                 //$timeout(scope.$digest);
             },
         },
-        /*link: {*/
-            /*pre: function(scope, element, attr, controller) {*/
-                /*scope.tocHilight = attr.tocHilight;*/
-            /*}*/
-        /*},*/
         controller: ['$scope', '$element', '$location', function($scope, $element, $location) {
             console.log($element);
             $scope.slideBullet = opt_attr($element, 'slide-bullet', '');
@@ -312,10 +374,56 @@ var app = angular.module('ngPres', opt_dep)
             $scope.subtitle = opt_attr($element, 'subtitle', '');
             $scope.debug_adjustbox = $element[0].attributes['debug-adjustbox'] !== undefined;
             $scope.hide_cursor = $element[0].attributes['hide-cursor'] !== undefined;
-            /*$scope.use_section_slides = $element[0].attributes['with-section-slides'] !== undefined;*/
-            /*attr = $element[0].attributes;*/
-            /*$scope.slideBullet = attr['slide-bullet'].value;*/
-            /*$scope.slideBulletActive = attr['active-slide-bullet'].value;*/
+            var next_slide_method = opt_attr($element, 'next-slide', 'left arrow').split(',');
+            var previous_slide_method = opt_attr($element, 'previous-slide', 'right arrow').split(',');
+            for (var i = 0; i < next_slide_method.length; ++i) {
+                var nsm = next_slide_method[i].trim();
+                if (keycodes[nsm] !== undefined) {
+                    next_slide_method[i] = 'keydown:' + keycodes[nsm];
+                } else if (nsm.substr(0, 6) == 'mouse ') {
+                    nsm = nsm.substring(6);
+                    if (mousebuttons[nsm] !== undefined) {
+                        next_slide_method[i] = 'mousedown:' + mousebuttons[nsm];
+                        if (nsm == 'right') {
+                            document.oncontextmenu = function(e) { e.preventDefault(); };
+                        }
+                    }
+                } else {
+                    next_slide_method[i] = 'keydown:' + nsm;
+                }
+                (function(method) {
+                    $scope.$on(method, function(onEvent, ev) {
+                        if (ev.path[0] && ev.path[0].nodeName != 'A') {
+                            $scope.$apply($scope.next_step());
+                            ev.preventDefault();
+                        }
+                    });
+                })(next_slide_method[i]);
+            }
+            for (var i = 0; i < previous_slide_method.length; ++i) {
+                var nsm = previous_slide_method[i].trim();
+                if (keycodes[nsm] !== undefined) {
+                    previous_slide_method[i] = 'keydown:' + keycodes[nsm];
+                } else if (nsm.substr(0, 6) == 'mouse ') {
+                    nsm = nsm.substring(6);
+                    if (mousebuttons[nsm] !== undefined) {
+                        previous_slide_method[i] = 'mousedown:' + mousebuttons[nsm];
+                        if (nsm == 'right') {
+                            document.oncontextmenu = function(e) { e.preventDefault(); };
+                        }
+                    }
+                } else {
+                    previous_slide_method[i] = 'keydown:' + nsm;
+                }
+                (function(method) {
+                    $scope.$on(method, function(onEvent, ev) {
+                        if (ev.path[0] && ev.path[0].nodeName != 'A') {
+                            $scope.$apply($scope.previous_step());
+                            ev.preventDefault();
+                        }
+                    });
+                })(previous_slide_method[i]);
+            }
             $scope.current_slide = 0;
             $scope.current_step = 0;
             $scope.global_step = 0;
@@ -350,12 +458,6 @@ var app = angular.module('ngPres', opt_dep)
                         $scope.go_to_slide(parts[0], parts[1]);
                     }
                 });
-
-            /*$scope.$watch(function () {*/
-                /*return location.hash;*/
-            /*}, function (value) {*/
-                /*console.log("location changed!", value);*/
-            /*});*/
 
             $scope.next_slide = function() {
                 if ($scope.current_slide < ($scope.slide_count - 1)) {
@@ -403,12 +505,6 @@ var app = angular.module('ngPres', opt_dep)
                 $location.hash($scope.current_slide + ':' + $scope.current_step);
             };
 
-            $scope.$on('keydown:37' /* left arrow */, function(onEvent, keypressEvent) {
-                $scope.$apply($scope.previous_step());
-            });
-            $scope.$on('keydown:39' /* right arrow */, function(onEvent, keypressEvent) {
-                $scope.$apply($scope.next_step());
-            });
             $scope.$on('keydown:80' /* p */, function(onEvent, keypressEvent) {
                 var cont = function(fn) { $timeout(fn); };
                 var parts = [];
@@ -567,29 +663,7 @@ var app = angular.module('ngPres', opt_dep)
              </div>`
     };
 })
-/*
-.directive('enterSection', function() {
-    return {
-        restrict: 'E',
-        require: '^presentation',
-        scope: {title:"@"},
-        link: function(scope, element, attr, presentation) {
-            presentation.enter_section(attr.title);
-        },
-        template: ''
-    };
-})
-.directive('leaveSection', function() {
-    return {
-        restrict: 'E',
-        require: '^presentation',
-        link: function(scope, element, attr, presentation) {
-            presentation.leave_section();
-        },
-        template: ''
-    };
-})
-//*/
+
 .directive('section', function() {
     return {
         restrict: 'E',
@@ -611,6 +685,7 @@ var app = angular.module('ngPres', opt_dep)
 //*/
     };
 })
+
 .directive('slide', function() {
     return {
         restrict: 'E',
@@ -635,10 +710,6 @@ var app = angular.module('ngPres', opt_dep)
                 /*console.log("LINKED SLIDE #" + scope.slide_index + " counting " + (1 + scope.steps_by_slide[scope.slide_index]) + " steps");*/
             }
         },
-        /*controller: function() {},*/
-        /*template: '<div ng-class="[\'slide\', {\'hidden\': slide_index != current_slide()}]" ng-transclude></div>'*/
-        /*templateUrl: 'frame.html'*/
-             /*<div ng-if="match_slide(slide_index)">-->*/
         template: `
              <div ng-class="{'hidden': !match_slide(slide_index)}">
                <table class="presentation">
