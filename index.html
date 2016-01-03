@@ -243,45 +243,28 @@ a:hover { text-decoration: underline; }
     </head>
 
     <body>
-            <!--
-        <div class="wrapper-with-intrinsic-ratio">
-            <div class="element-to-stretch">
-            -->
-            <!--
-            debug-adjustbox
-            hide-cursor
-            -->
         <presentation
             slide-bullet="&#x25A1;"
             active-slide-bullet="&#x25A0;"
-            toc-hilight="pouet"
             author="Damien Leroux"
             where="on the Web"
             date="31 dec 2015"
             title="ng-pres: write your presentation slides with HTML"
             subtitle="powered by AngularJS"
+            next-slide="mouse left,space,right arrow"
+            previous-slide="mouse right,backspace,left arrow"
             >
-            <!--<page role="title">
-                <div style="text-align: center; background: white;">
-                    <title/>
-                    <subtitle/>
-                    <small><p style="text-align: center">Use the left and right arrow keys to navigate this presentation</p></small>
-                </div>
-                <footer>
-                    <default-footer/>
-                </footer>
-                </page>-->
             <slide no-header no-sidebar no-slide-counter>
                 <centered>
-                <!--<h1>ng-pres: write your presentation slides with HTML</h1>-->
-                <!--<h2>powered by AngularJS</h2>-->
-                <span class="big"><talk-title></talk-title>
-                    <talk-subtitle></talk-subtitle>
-                    <p>&nbsp;</p>
-                    <p>A presentation by {{talk_author}}</p>
-                    <p class="normal">(well, it's really a demo as well as the doc)</p>
-                    <p>&nbsp;</p>
-                    <p class="normal">Use the left and right arrow keys to navigate this presentation</p></span>
+                    <span class="big">
+                        <talk-title></talk-title>
+                        <talk-subtitle></talk-subtitle>
+                        <p>&nbsp;</p>
+                        <p>A presentation by {{talk_author}}</p>
+                        <p class="normal">(well, it's really a demo as well as the doc)</p>
+                        <p>&nbsp;</p>
+                        <p class="normal">Use the left and right arrow keys to navigate this presentation</p>
+                    </span>
                 </centered>
             </slide>
             <section title="Why ng-pres?">
@@ -491,6 +474,20 @@ body { background: black; } /* this will show around the slides depending on the
                         </block>
                     </slide>
                 </section>
+                <section title="Touchscreens">
+                    <slide>
+                        <block title="In case you wish to support touchscreens">
+                            <p>Including the AngularJS module <code>ng-touch</code> after the main AngularJS script <strong>and before the <em>ng-pres</em> script</strong> in the HTML head will automatically enable support for swipe left and right gestures. Swipe left for previous slide, swipe right for next slide.</p>
+                            <p>Example:</p>
+                            <pre class="syntax">&lt;script
+    type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.2/angular.js"&gt;&lt;/script&gt;
+&lt;script
+    type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.2/angular-touch.js"&gt;&lt;/script&gt;</pre>
+                        </block>
+                    </slide>
+                </section>
             </section>
             <section title="Reference">
                 <section title="presentation">
@@ -550,6 +547,16 @@ body { background: black; } /* this will show around the slides depending on the
                                         <td class="attrname">hide-cursor</td>
                                         <td class="attrtype">none</td>
                                         <td class="attreffect">Hide the mouse cursor when hovering the presentation.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="attrname">next slide</td>
+                                        <td class="attrtype">string</td>
+                                        <td class="attreffect">Select the key(s) or mouse button(s) to press to go to next slide. Default is <code>right arrow</code>. Comma-separated list of symbolic names or plain keycodes.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="attrname">previous slide</td>
+                                        <td class="attrtype">string</td>
+                                        <td class="attreffect">Select the key(s) or mouse button(s) to press to go to previous slide. Default is <code>left arrow</code>. Comma-separated list of symbolic names or plain keycodes.</td>
                                     </tr>
                                 </tbody>
                             </table>
