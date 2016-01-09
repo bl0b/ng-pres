@@ -371,6 +371,7 @@ var app = angular.module('ngPres', opt_dep)
             $scope.talk_date = opt_attr($element, 'date', '');
             $scope.talk_where = opt_attr($element, 'where', '');
             $scope.title = opt_attr($element, 'title', '');
+            $element.removeAttr('title');
             $scope.subtitle = opt_attr($element, 'subtitle', '');
             $scope.debug_adjustbox = $element[0].attributes['debug-adjustbox'] !== undefined;
             $scope.hide_cursor = $element[0].attributes['hide-cursor'] !== undefined;
@@ -676,6 +677,7 @@ var app = angular.module('ngPres', opt_dep)
         link: {
             pre: function(scope, element, attr, presentation) {
                 presentation.enter_section(attr.title);
+                element.removeAttr('title');
             },
             post: function(scope, element, attr, presentation) {
                 presentation.leave_section();
@@ -884,7 +886,9 @@ var app = angular.module('ngPres', opt_dep)
         /*scope: {title: '@'},*/
         scope: {},
         link: function(scope, element, attr) {
-            scope.title = $sce.trustAsHtml(attr.title);
+            var title = attr.title;
+            element.removeAttr('title');
+            scope.title = $sce.trustAsHtml(title);
         },
         template: `
             <div class="block">
